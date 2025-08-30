@@ -1,0 +1,27 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="application-local-dev2" type="Application" factoryName="Application">
+    <envs>
+      <env name="env" value="dev2" />
+      <env name="config-url" value="https://config:Finzly%40123@bankos-config-test2.finzly.net/config" />
+      <env name="logging.level.root" value="INFO" />
+      <env name="PORT" value="8183" />
+      <env name="db.tenant.finzly.ip" value="localhost" />
+      <env name="db.tenant.finzly.port" value="3306" />
+      <env name="db.tenant.finzly.username" value="root" />
+      <env name="db.tenant.finzly.password" value="root" />
+      <env name="logging.level.org.springframework" value="INFO" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.finzly.galaxy.rtp.RTPValidatorApplication" />
+    <module name="galaxy-rtp-validator-service" />
+    <shortenClasspath name="ARGS_FILE" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.finzly.bankos.payment.fedwire.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

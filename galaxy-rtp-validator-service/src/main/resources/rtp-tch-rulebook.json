@@ -1,0 +1,67 @@
+{
+  "GrpHdr": {
+    "MsgId": {"mandatory": true},
+    "CreDtTm": {"mandatory": true, "pattern": "\\d{4}-\\d{2}-\\d{2}T.*"},
+    "NbOfTxs": {"mandatory": true, "pattern": "\\d+"},
+    "IntrBkSttlmDt": {"mandatory": true, "pattern": "\\d{4}-\\d{2}-\\d{2}"},
+    "TtlIntrBkSttlmAmt": {"mandatory": true, "Ccy": true},
+    "SttlmInf": {
+      "mandatory": true,
+      "SttlmMtd": {"mandatory": true},
+      "ClrSysRef": {"mandatory": false}
+    },
+    "InstgAgt": {"mandatory": true, "bic": true},
+    "InstdAgt": {"mandatory": true, "bic": true}
+  },
+  "CdtTrfTxInf": {
+    "PmtId": {
+      "InstrId": {"mandatory": true},
+      "EndToEndId": {"mandatory": true},
+      "TxId": {"mandatory": false},
+      "ClrSysRef": {"mandatory": false}
+    },
+    "IntrBkSttlmAmt": {"mandatory": true, "Ccy": true},
+    "ChrgBr": {"mandatory": true, "allowedValues": ["DEBT", "CRED", "SHAR", "SLEV"]},
+    "Dbtr": {
+      "mandatory": true,
+      "Nm": {"mandatory": true},
+      "PstlAdr": {
+        "Ctry": {"mandatory": true},
+        "AdrLine": {"maxItems": 5, "maxLength": 140}
+      }
+    },
+    "DbtrAcct": {"iban": true},
+    "Cdtr": {
+      "mandatory": true,
+      "Nm": {"mandatory": true},
+      "PstlAdr": {
+        "Ctry": {"mandatory": true},
+        "AdrLine": {"maxItems": 5, "maxLength": 140}
+      }
+    },
+    "CdtrAcct": {"iban": true},
+    "UltmtDbtr": {"mandatoryIf": "ChrgBr=='DEBT'", "maxLength": 140},
+    "UltmtCdtr": {"mandatoryIf": "ChrgBr=='CRED'", "maxLength": 140},
+    "RmtInf": {
+      "Ustrd": {"maxItems": 5, "maxLength": 140},
+      "Strd": {
+        "RmtId": {"maxLength": 35},
+        "Tp": {"maxLength": 35},
+        "Issr": {"maxLength": 35},
+        "RmtAmt": {"Ccy": true}
+      }
+    },
+    "Purp": {"maxLength": 4},
+    "InstrForCdtrAgt": {
+      "Cd": {"maxItems": 5, "maxLength": 35}
+    },
+    "ChrgsInf": {
+      "maxItems": 5,
+      "Amt": {"Ccy": true},
+      "CdtDbtInd": {"allowedValues": ["CRDT", "DBIT"]},
+      "ChrgBr": {"allowedValues": ["DEBT", "CRED", "SHAR", "SLEV"]},
+      "Tp": {"allowedValues":["SHA", "OUR", "BEN"], "maxLength": 35}
+    },
+    "AddtlInf": {"maxLength": 140}
+  }
+}

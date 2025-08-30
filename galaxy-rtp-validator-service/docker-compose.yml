@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  galaxy-rtp-validator:
+    build:
+      context: .
+      dockerfile: ./docker-local/Dockerfile
+    image: galaxy-rtp-validator
+    hostname: galaxy-rtp-validator
+    ports:
+      - "8036:8036"
+      - "5022:5022"
+    networks:
+      local-docker-network:
+        ipv4_address: 172.18.0.44
+    volumes:
+      - ./logs/galaxy-rtp-validator:/var/log/galaxy-rtp-validator
+
+networks:
+  local-docker-network:
+    external: true
+    name: local-docker-network
