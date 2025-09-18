@@ -15,6 +15,11 @@
 	<name>galaxy-rtp-validator-service</name>
 	<description>Galaxy RTP Validator Service Project</description>
 	<properties>
+		<mapstruct.version>1.5.5.Final</mapstruct.version>
+		<jaxb.version>4.0.0</jaxb.version>
+		<apache-poi.version>5.2.4</apache-poi.version>
+		<snakeyaml.version>2.2</snakeyaml.version>
+		<commons-io.version>2.11.0</commons-io.version>
 	</properties>
 
 	<dependencies>
@@ -32,6 +37,7 @@
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct-processor</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.xml.bind</groupId>
@@ -291,6 +297,26 @@
 		<dependency>
 			<groupId>com.swapstech.galaxy.legalentity</groupId>
 			<artifactId>galaxy-legalentity-client</artifactId>
+		</dependency>
+            <!-- Apache POI for Excel generation -->
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+            </dependency>
+		<!-- SnakeYAML for YAML parsing -->
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+		</dependency>
+		
+		<!-- Apache Commons IO for file operations -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
 		</dependency>
 	</dependencies>
 

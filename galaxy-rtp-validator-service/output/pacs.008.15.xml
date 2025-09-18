@@ -2,11 +2,11 @@
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08">
     <FIToFICstmrCdtTrf>
         <GrpHdr>
-            <MsgId>MSG1756542117102-15</MsgId>
-            <CreDtTm>2025-08-30T13:51:57.1029034</CreDtTm>
+            <MsgId>MSG1758085983374-15</MsgId>
+            <CreDtTm>2025-09-17T10:43:03.3743914</CreDtTm>
             <NbOfTxs>1</NbOfTxs>
             <TtlIntrBkSttlmAmt Ccy="USD">1000.00</TtlIntrBkSttlmAmt>
-            <IntrBkSttlmDt>2025-08-30</IntrBkSttlmDt>
+            <IntrBkSttlmDt>2025-09-17</IntrBkSttlmDt>
             <SttlmInf>
                 <SttlmMtd>CLRG</SttlmMtd>
                 <ClrSys>
@@ -16,9 +16,9 @@
         </GrpHdr>
         <CdtTrfTxInf>
             <PmtId>
-                <InstrId>INSTR1756542117102-15</InstrId>
-                <EndToEndId>E2E1756542117102-15</EndToEndId>
-                <TxId>TX1756542117102-15</TxId>
+                <InstrId>INSTR1758085983375-15</InstrId>
+                <EndToEndId>E2E1758085983375-15</EndToEndId>
+                <TxId>TX1758085983375-15</TxId>
             </PmtId>
             <PmtTpInf>
                 <SvcLvl>

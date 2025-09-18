@@ -30,34 +30,14 @@
     <galaxy-audit-client.version>6.2.0.0-SNAPSHOT</galaxy-audit-client.version>
     <mapstruct.version>1.5.5.Final</mapstruct.version>
     <jaxb.version>4.0.0</jaxb.version>
+        <apache-poi.version>5.1.0</apache-poi.version>
+    <snakeyaml.version>2.2</snakeyaml.version>
+        <commons-io.version>2.15.1</commons-io.version>
   </properties>
 
-  <dependencyManagement>
-    <dependencies>
-      <!-- MapStruct for mapping -->
-      <dependency>
-        <groupId>org.mapstruct</groupId>
-        <artifactId>mapstruct</artifactId>
-        <version>${mapstruct.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-impl</artifactId>
-        <version>4.0.0</version>
-      </dependency>
-
-      <!-- MapStruct Processor -->
-      <dependency>
-        <groupId>org.mapstruct</groupId>
-        <artifactId>mapstruct-processor</artifactId>
-        <version>${mapstruct.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>jakarta.xml.bind</groupId>
-        <artifactId>jakarta.xml.bind-api</artifactId>
-        <version>${jaxb.version}</version>
-      </dependency>
+        <dependencyManagement>
+          <dependencies>
+      
       <dependency>
         <groupId>com.finzly.galaxy.rtp.validator</groupId>
         <artifactId>galaxy-rtp-validator-client</artifactId>
@@ -70,11 +50,6 @@
         </exclusions>
       </dependency>
 
-      <dependency>
-        <groupId>com.fasterxml.jackson.datatype</groupId>
-        <artifactId>jackson-datatype-jsr310</artifactId>
-        <version>${jackson-databind.version}</version> <!-- match your Jackson version -->
-      </dependency>
       <dependency>
         <groupId>com.finzly.enterprise.bankos</groupId>
         <artifactId>finzly-bom</artifactId>

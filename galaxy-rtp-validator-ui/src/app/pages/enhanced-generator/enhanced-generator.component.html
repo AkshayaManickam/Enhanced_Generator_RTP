@@ -1,0 +1,301 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Enhanced RTP Message Generator</h1>
+      <p class="mt-2 text-gray-600">Generate comprehensive test messages with field selection and detailed reporting</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Configuration Panel -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Configuration</h2>
+          
+          <!-- Basic Settings -->
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Message Type</label>
+              <select [(ngModel)]="formData.messageType" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="pacs.008">PACS.008 - Customer Credit Transfer</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Number of Messages</label>
+              <input type="number" [(ngModel)]="formData.numberOfFiles" min="1" max="100" 
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Test Scenario</label>
+              <select [(ngModel)]="formData.testScenario" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="basic">Basic</option>
+                <option value="comprehensive">Comprehensive</option>
+                <option value="edge_cases">Edge Cases</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Amount Range</label>
+              <select [(ngModel)]="formData.amountRange" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="small">Small ($10)</option>
+                <option value="medium">Medium ($1,000)</option>
+                <option value="large">Large ($10,000)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Currency</label>
+              <select [(ngModel)]="formData.currency" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="CAD">CAD</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Business Type</label>
+              <select [(ngModel)]="formData.businessType" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="BUSINESS">Business</option>
+                <option value="CONSUMER">Consumer</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Options -->
+          <div class="mt-6 space-y-3">
+            <h3 class="text-lg font-medium text-gray-900">Options</h3>
+            
+            <label class="flex items-center">
+              <input type="checkbox" [(ngModel)]="formData.validateAgainstXsd" class="mr-2">
+              <span class="text-sm text-gray-700">Validate against XSD</span>
+            </label>
+
+            <label class="flex items-center">
+              <input type="checkbox" [(ngModel)]="formData.includeFieldDescriptions" class="mr-2">
+              <span class="text-sm text-gray-700">Include field descriptions</span>
+            </label>
+
+            <label class="flex items-center">
+              <input type="checkbox" [(ngModel)]="formData.includeIsoDescriptions" class="mr-2">
+              <span class="text-sm text-gray-700">Include ISO descriptions</span>
+            </label>
+
+            <label class="flex items-center">
+              <input type="checkbox" [(ngModel)]="formData.generateReport" class="mr-2">
+              <span class="text-sm text-gray-700">Generate Excel report</span>
+            </label>
+          </div>
+
+          <!-- Field Selection Toggle -->
+          <div class="mt-6">
+            <button (click)="showFieldSelection = !showFieldSelection" 
+                    class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              {{ showFieldSelection ? 'Hide' : 'Show' }} Field Selection
+            </button>
+          </div>
+
+          <!-- Generate Button -->
+          <div class="mt-6">
+            <button (click)="generateMessages()" [disabled]="isLoading"
+                    class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed">
+              <span *ngIf="isLoading">Generating...</span>
+              <span *ngIf="!isLoading">Generate Messages</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Field Selection Panel -->
+      <div class="lg:col-span-2" *ngIf="showFieldSelection">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Field Selection</h2>
+          
+          <!-- Search and Filter -->
+          <div class="mb-4 space-y-4">
+            <div>
+              <input type="text" [(ngModel)]="searchTerm" placeholder="Search fields..."
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Group</label>
+              <select [(ngModel)]="selectedFieldGroup" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="all">All Fields</option>
+                <option *ngFor="let group of fieldGroups" [value]="group.name">{{ group.name }}</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Optional Fields -->
+          <div class="mb-6">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-lg font-medium text-gray-900">Optional Fields</h3>
+              <div class="space-x-2">
+                <button (click)="selectAllFields('optional')" 
+                        class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200">
+                  Select All
+                </button>
+                <button (click)="deselectAllFields('optional')" 
+                        class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
+                  Deselect All
+                </button>
+              </div>
+            </div>
+            
+            <div class="space-y-2 max-h-64 overflow-y-auto">
+              <div *ngFor="let field of getFilteredFields('optional')" 
+                   class="flex items-start space-x-3 p-3 border border-gray-200 rounded-md">
+                <input type="checkbox" 
+                       [checked]="isFieldSelected(field.path, 'optional')"
+                       (change)="onFieldSelectionChange(field.path, 'optional', $event)"
+                       class="mt-1">
+                <div class="flex-1">
+                  <div class="font-medium text-sm text-gray-900">{{ field.path }}</div>
+                  <div class="text-xs text-gray-600 mt-1">{{ field.description }}</div>
+                  <div class="text-xs text-blue-600 mt-1" *ngIf="field.isoDescription">{{ field.isoDescription }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conditional Fields -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-lg font-medium text-gray-900">Conditional Fields</h3>
+              <div class="space-x-2">
+                <button (click)="selectAllFields('conditional')" 
+                        class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200">
+                  Select All
+                </button>
+                <button (click)="deselectAllFields('conditional')" 
+                        class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
+                  Deselect All
+                </button>
+              </div>
+            </div>
+            
+            <div class="space-y-2 max-h-64 overflow-y-auto">
+              <div *ngFor="let field of getFilteredFields('conditional')" 
+                   class="flex items-start space-x-3 p-3 border border-gray-200 rounded-md">
+                <input type="checkbox" 
+                       [checked]="isFieldSelected(field.path, 'conditional')"
+                       (change)="onFieldSelectionChange(field.path, 'conditional', $event)"
+                       class="mt-1">
+                <div class="flex-1">
+                  <div class="font-medium text-sm text-gray-900">{{ field.path }}</div>
+                  <div class="text-xs text-gray-600 mt-1">{{ field.description }}</div>
+                  <div class="text-xs text-orange-600 mt-1" *ngIf="field.condition">Condition: {{ field.condition }}</div>
+                  <div class="text-xs text-blue-600 mt-1" *ngIf="field.isoDescription">{{ field.isoDescription }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div *ngIf="results" class="mt-8">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-gray-900">Generated Messages</h2>
+          <div class="space-x-2">
+            <button (click)="downloadReport()" 
+                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              Download Report
+            </button>
+            <button (click)="clearResults()" 
+                    class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500">
+              Clear Results
+            </button>
+          </div>
+        </div>
+
+        <!-- Metadata -->
+        <div class="mb-6 p-4 bg-gray-50 rounded-md">
+          <h3 class="font-medium text-gray-900 mb-2">Generation Summary</h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div>
+              <span class="font-medium">Total Messages:</span>
+              <span class="ml-1">{{ results.metadata.totalMessagesGenerated }}</span>
+            </div>
+            <div>
+              <span class="font-medium">Test Scenario:</span>
+              <span class="ml-1">{{ results.metadata.testScenario }}</span>
+            </div>
+            <div>
+              <span class="font-medium">Generated At:</span>
+              <span class="ml-1">{{ results.metadata.generatedAt | date:'short' }}</span>
+            </div>
+            <div>
+              <span class="font-medium">Selected Fields:</span>
+              <span class="ml-1">{{ (results.metadata.selectedOptionalFields?.length || 0) + (results.metadata.selectedConditionalFields?.length || 0) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Messages List -->
+        <div class="space-y-4">
+          <div *ngFor="let message of getCurrentPageMessages(); let i = index" 
+               class="border border-gray-200 rounded-md p-4">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="font-medium text-gray-900">{{ message.messageId }}</h4>
+              <div class="flex items-center space-x-2">
+                <span [class]="message.isValid ? 'px-2 py-1 text-xs bg-green-100 text-green-800 rounded' : 'px-2 py-1 text-xs bg-red-100 text-red-800 rounded'">
+                  {{ message.isValid ? 'Valid' : 'Invalid' }}
+                </span>
+                <button (click)="downloadMessage(message)" 
+                        class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200">
+                  Download
+                </button>
+                <button (click)="copyToClipboard(message.xmlContent)" 
+                        class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
+                  Copy
+                </button>
+              </div>
+            </div>
+            
+            <div class="text-sm text-gray-600 mb-2">
+              <span class="font-medium">Included Fields:</span> {{ message.includedFields.length }} | 
+              <span class="font-medium">Excluded Fields:</span> {{ message.excludedFields.length }}
+            </div>
+            
+            <div *ngIf="message.validationErrors.length > 0" class="text-sm text-red-600 mb-2">
+              <span class="font-medium">Validation Errors:</span> {{ message.validationErrors.join(', ') }}
+            </div>
+            
+            <!-- XML Preview -->
+            <details class="mt-2">
+              <summary class="cursor-pointer text-sm text-blue-600 hover:text-blue-800">View XML</summary>
+              <pre class="mt-2 p-3 bg-gray-100 rounded text-xs overflow-x-auto">{{ message.xmlContent }}</pre>
+            </details>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div *ngIf="getTotalPages() > 1" class="mt-6 flex items-center justify-between">
+          <div class="text-sm text-gray-700">
+            Showing {{ currentPage * messagesPerPage + 1 }} to {{ getEndIndex() }} of {{ results.messages.length }} messages
+          </div>
+          <div class="flex space-x-2">
+            <button (click)="previousPage()" [disabled]="currentPage === 0"
+                    class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              Previous
+            </button>
+            <span class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded">
+              {{ currentPage + 1 }} of {{ getTotalPages() }}
+            </span>
+            <button (click)="nextPage()" [disabled]="currentPage === getTotalPages() - 1"
+                    class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
