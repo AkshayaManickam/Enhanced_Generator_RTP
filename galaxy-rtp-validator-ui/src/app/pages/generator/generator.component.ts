@@ -16,7 +16,9 @@ import { RtpService, GenerateRtpRequest, RtpResponse } from '../../services/rtp.
 export class GeneratorComponent implements OnInit {
   formData = {
     messageType: 'pacs.008',
-    numberOfFiles: 5
+    typeOfPayments: 'RTP',
+    numberOfFiles: 5,
+    optionalTags: 'Default'
   };
 
   isLoading: boolean = false;
@@ -30,6 +32,13 @@ export class GeneratorComponent implements OnInit {
   messageTypes = [
     { value: 'pacs.008', label: 'PACS.008 - Customer Credit Transfer', description: 'Credit transfer messages for customer payments' }
   ];
+
+   typeOfPayments = [
+    { value: 'RTP', label: 'PACS.008 - Customer Credit Transfer', description: 'Credit transfer messages for customer payments' }
+  ];
+
+  // generator.component.ts
+  optionalTags = ['Default', 'PmtId', 'PstlAdr', 'DbtrAgt'];
 
   constructor(
     private rtpService: RtpService,

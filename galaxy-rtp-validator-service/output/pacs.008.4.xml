@@ -2,11 +2,11 @@
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08">
     <FIToFICstmrCdtTrf>
         <GrpHdr>
-            <MsgId>MSG1756542116844-4</MsgId>
-            <CreDtTm>2025-08-30T13:51:56.8445036</CreDtTm>
+            <MsgId>MSG648351004</MsgId>
+            <CreDtTm>2025-09-19T16:18:08.3514008</CreDtTm>
             <NbOfTxs>1</NbOfTxs>
-            <TtlIntrBkSttlmAmt Ccy="USD">1000.00</TtlIntrBkSttlmAmt>
-            <IntrBkSttlmDt>2025-08-30</IntrBkSttlmDt>
+            <TtlIntrBkSttlmAmt Ccy="USD">10004.00</TtlIntrBkSttlmAmt>
+            <IntrBkSttlmDt>2025-09-23</IntrBkSttlmDt>
             <SttlmInf>
                 <SttlmMtd>CLRG</SttlmMtd>
                 <ClrSys>
@@ -16,74 +16,60 @@
         </GrpHdr>
         <CdtTrfTxInf>
             <PmtId>
-                <InstrId>INSTR1756542116844-4</InstrId>
-                <EndToEndId>E2E1756542116844-4</EndToEndId>
-                <TxId>TX1756542116844-4</TxId>
+                <InstrId>INSTR648351004</InstrId>
+                <EndToEndId>E2E648351004</EndToEndId>
+                <TxId>TX648351004</TxId>
             </PmtId>
             <PmtTpInf>
                 <SvcLvl>
                     <Cd>SDVA</Cd>
                 </SvcLvl>
                 <LclInstrm>
-                    <Prtry>STANDARD</Prtry>
+                    <Prtry>INTERMEDIARY</Prtry>
                 </LclInstrm>
                 <CtgyPurp>
-                    <Prtry>BUSINESS</Prtry>
+                    <Prtry>CONSUMER</Prtry>
                 </CtgyPurp>
             </PmtTpInf>
-            <IntrBkSttlmAmt Ccy="USD">1000.00</IntrBkSttlmAmt>
+            <IntrBkSttlmAmt Ccy="USD">10004.00</IntrBkSttlmAmt>
             <ChrgBr>SLEV</ChrgBr>
             <InstgAgt>
                 <FinInstnId>
-                    <BICFI>BOFAUS3N</BICFI>
+                    <BICFI>DEFAULT_InstgAgtBICFI_1758278648352</BICFI>
                 </FinInstnId>
             </InstgAgt>
             <InstdAgt>
                 <FinInstnId>
-                    <BICFI>CHASUS33</BICFI>
+                    <BICFI>DEFAULT_InstdAgtBICFI_1758278648353</BICFI>
                 </FinInstnId>
             </InstdAgt>
             <Dbtr>
-                <Nm>John Doe</Nm>
-                <PstlAdr>
-                    <StrtNm>123 Main St</StrtNm>
-                    <PstCd>10001</PstCd>
-                    <TwnNm>New York</TwnNm>
-                    <CtrySubDvsn>CA</CtrySubDvsn>
-                    <Ctry>US</Ctry>
-                </PstlAdr>
+                <Nm>Michael Wilson</Nm>
             </Dbtr>
             <DbtrAcct>
                 <Id>
-                    <IBAN>US12345678901234567890</IBAN>
+                    <IBAN>DEFAULT_DbtrAcctIban_1758278648353</IBAN>
                 </Id>
-                <Nm>John Doe Account</Nm>
+                <Nm>Michael Wilson Account</Nm>
             </DbtrAcct>
             <DbtrAgt>
                 <FinInstnId>
-                    <BICFI>BOFAUS3N</BICFI>
+                    <BICFI>JPMOUS33</BICFI>
                 </FinInstnId>
             </DbtrAgt>
             <CdtrAgt>
                 <FinInstnId>
-                    <BICFI>CHASUS33</BICFI>
+                    <BICFI>JPMOUS33</BICFI>
                 </FinInstnId>
             </CdtrAgt>
             <Cdtr>
-                <Nm>Jane Smith</Nm>
-                <PstlAdr>
-                    <StrtNm>456 Market St</StrtNm>
-                    <PstCd>94105</PstCd>
-                    <TwnNm>San Francisco</TwnNm>
-                    <CtrySubDvsn>CA</CtrySubDvsn>
-                    <Ctry>US</Ctry>
-                </PstlAdr>
+                <Nm>Michael Wilson</Nm>
             </Cdtr>
             <CdtrAcct>
                 <Id>
-                    <IBAN>US09876543210987654321</IBAN>
+                    <IBAN>DEFAULT_CdtrAcctIban_1758278648355</IBAN>
                 </Id>
-                <Nm>Jane Smith Account</Nm>
+                <Nm>Michael Wilson Account</Nm>
             </CdtrAcct>
         </CdtTrfTxInf>
     </FIToFICstmrCdtTrf>

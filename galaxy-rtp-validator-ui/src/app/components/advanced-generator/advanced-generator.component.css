@@ -1,0 +1,175 @@
+/* Advanced Generator component styles - matching normal generator design */
+
+/* Hover lift effect */
+.hover-lift {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom scrollbar for field list */
+.space-y-3::-webkit-scrollbar {
+  width: 6px;
+}
+
+.space-y-3::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.space-y-3::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.space-y-3::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Field selection hover effects */
+.border-gray-200:hover {
+  border-color: #d1d5db;
+  background-color: #f9fafb;
+}
+
+/* Selected field styling */
+.bg-green-50 {
+  background-color: #f0fdf4;
+}
+
+.border-green-300 {
+  border-color: #86efac;
+}
+
+/* Statistics cards */
+.bg-red-50 {
+  background-color: #fef2f2;
+}
+
+.bg-blue-50 {
+  background-color: #eff6ff;
+}
+
+.bg-yellow-50 {
+  background-color: #fefce8;
+}
+
+.text-red-600 {
+  color: #dc2626;
+}
+
+.text-blue-600 {
+  color: #2563eb;
+}
+
+.text-yellow-600 {
+  color: #ca8a04;
+}
+
+/* Badge styling */
+.bg-red-100 {
+  background-color: #fee2e2;
+}
+
+.bg-blue-100 {
+  background-color: #dbeafe;
+}
+
+.bg-yellow-100 {
+  background-color: #fef3c7;
+}
+
+.text-red-800 {
+  color: #991b1b;
+}
+
+.text-blue-800 {
+  color: #1e40af;
+}
+
+.text-yellow-800 {
+  color: #92400e;
+}
+
+/* Primary color utilities */
+.text-primary-600 {
+  color: #2563eb;
+}
+
+.bg-primary-100 {
+  background-color: #dbeafe;
+}
+
+.border-primary-300 {
+  border-color: #93c5fd;
+}
+
+.text-primary-700 {
+  color: #1d4ed8;
+}
+
+.bg-primary-600 {
+  background-color: #2563eb;
+}
+
+.hover\:bg-primary-700:hover {
+  background-color: #1d4ed8;
+}
+
+.focus\:ring-primary-500:focus {
+  --tw-ring-color: #3b82f6;
+}
+
+.focus\:border-primary-500:focus {
+  border-color: #3b82f6;
+}
+
+/* Loading animation */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .lg\:grid-cols-3 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  .lg\:col-span-1 {
+    grid-column: span 1 / span 1;
+  }
+  
+  .lg\:col-span-2 {
+    grid-column: span 1 / span 1;
+  }
+  
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  .md\:grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  .md\:grid-cols-4 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
