@@ -2,11 +2,11 @@
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08">
     <FIToFICstmrCdtTrf>
         <GrpHdr>
-            <MsgId>MSG648269002</MsgId>
-            <CreDtTm>2025-09-19T16:16:08.2695023</CreDtTm>
+            <MsgId>MSG673977002</MsgId>
+            <CreDtTm>2025-09-22T10:06:33.9774042</CreDtTm>
             <NbOfTxs>1</NbOfTxs>
             <TtlIntrBkSttlmAmt Ccy="USD">1002.00</TtlIntrBkSttlmAmt>
-            <IntrBkSttlmDt>2025-09-21</IntrBkSttlmDt>
+            <IntrBkSttlmDt>2025-09-24</IntrBkSttlmDt>
             <SttlmInf>
                 <SttlmMtd>CLRG</SttlmMtd>
                 <ClrSys>
@@ -16,9 +16,9 @@
         </GrpHdr>
         <CdtTrfTxInf>
             <PmtId>
-                <InstrId>INSTR648269002</InstrId>
-                <EndToEndId>E2E648270002</EndToEndId>
-                <TxId>TX648270002</TxId>
+                <InstrId>INSTR673977002</InstrId>
+                <EndToEndId>E2E673977002</EndToEndId>
+                <TxId>TX673977002</TxId>
             </PmtId>
             <PmtTpInf>
                 <SvcLvl>
@@ -35,12 +35,12 @@
             <ChrgBr>SLEV</ChrgBr>
             <InstgAgt>
                 <FinInstnId>
-                    <BICFI>DEFAULT_InstgAgtBICFI_1758278648270</BICFI>
+                    <BICFI>DEFAULT_InstgAgtBICFI_1758515673978</BICFI>
                 </FinInstnId>
             </InstgAgt>
             <InstdAgt>
                 <FinInstnId>
-                    <BICFI>DEFAULT_InstdAgtBICFI_1758278648272</BICFI>
+                    <BICFI>DEFAULT_InstdAgtBICFI_1758515673978</BICFI>
                 </FinInstnId>
             </InstdAgt>
             <Dbtr>
@@ -48,7 +48,7 @@
             </Dbtr>
             <DbtrAcct>
                 <Id>
-                    <IBAN>DEFAULT_DbtrAcctIban_1758278648273</IBAN>
+                    <IBAN>DEFAULT_DbtrAcctIban_1758515673979</IBAN>
                 </Id>
                 <Nm>Robert Johnson Account</Nm>
             </DbtrAcct>
@@ -67,7 +67,7 @@
             </Cdtr>
             <CdtrAcct>
                 <Id>
-                    <IBAN>DEFAULT_CdtrAcctIban_1758278648273</IBAN>
+                    <IBAN>DEFAULT_CdtrAcctIban_1758515673979</IBAN>
                 </Id>
                 <Nm>Robert Johnson Account</Nm>
             </CdtrAcct>

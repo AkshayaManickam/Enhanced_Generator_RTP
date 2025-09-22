@@ -2,11 +2,11 @@
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08">
     <FIToFICstmrCdtTrf>
         <GrpHdr>
-            <MsgId>MSG648862010</MsgId>
-            <CreDtTm>2025-09-19T16:24:08.86271</CreDtTm>
+            <MsgId>MSG674309010</MsgId>
+            <CreDtTm>2025-09-22T10:14:34.3095802</CreDtTm>
             <NbOfTxs>1</NbOfTxs>
             <TtlIntrBkSttlmAmt Ccy="USD">110.00</TtlIntrBkSttlmAmt>
-            <IntrBkSttlmDt>2025-09-29</IntrBkSttlmDt>
+            <IntrBkSttlmDt>2025-10-02</IntrBkSttlmDt>
             <SttlmInf>
                 <SttlmMtd>CLRG</SttlmMtd>
                 <ClrSys>
@@ -16,9 +16,9 @@
         </GrpHdr>
         <CdtTrfTxInf>
             <PmtId>
-                <InstrId>INSTR648863010</InstrId>
-                <EndToEndId>E2E648863010</EndToEndId>
-                <TxId>TX648863010</TxId>
+                <InstrId>INSTR674309010</InstrId>
+                <EndToEndId>E2E674309010</EndToEndId>
+                <TxId>TX674309010</TxId>
             </PmtId>
             <PmtTpInf>
                 <SvcLvl>
@@ -35,12 +35,12 @@
             <ChrgBr>SLEV</ChrgBr>
             <InstgAgt>
                 <FinInstnId>
-                    <BICFI>DEFAULT_InstgAgtBICFI_1758278648864</BICFI>
+                    <BICFI>DEFAULT_InstgAgtBICFI_1758515674310</BICFI>
                 </FinInstnId>
             </InstgAgt>
             <InstdAgt>
                 <FinInstnId>
-                    <BICFI>DEFAULT_InstdAgtBICFI_1758278648864</BICFI>
+                    <BICFI>DEFAULT_InstdAgtBICFI_1758515674310</BICFI>
                 </FinInstnId>
             </InstdAgt>
             <Dbtr>
@@ -48,7 +48,7 @@
             </Dbtr>
             <DbtrAcct>
                 <Id>
-                    <IBAN>DEFAULT_DbtrAcctIban_1758278648865</IBAN>
+                    <IBAN>DEFAULT_DbtrAcctIban_1758515674310</IBAN>
                 </Id>
                 <Nm>ABC Corporation Account</Nm>
             </DbtrAcct>
@@ -67,7 +67,7 @@
             </Cdtr>
             <CdtrAcct>
                 <Id>
-                    <IBAN>DEFAULT_CdtrAcctIban_1758278648865</IBAN>
+                    <IBAN>DEFAULT_CdtrAcctIban_1758515674310</IBAN>
                 </Id>
                 <Nm>ABC Corporation Account</Nm>
             </CdtrAcct>

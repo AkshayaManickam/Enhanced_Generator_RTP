@@ -2,11 +2,11 @@
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08">
     <FIToFICstmrCdtTrf>
         <GrpHdr>
-            <MsgId>MSG648673008</MsgId>
-            <CreDtTm>2025-09-19T16:22:08.6745062</CreDtTm>
+            <MsgId>MSG674199008</MsgId>
+            <CreDtTm>2025-09-22T10:12:34.1991279</CreDtTm>
             <NbOfTxs>1</NbOfTxs>
             <TtlIntrBkSttlmAmt Ccy="USD">1000008.00</TtlIntrBkSttlmAmt>
-            <IntrBkSttlmDt>2025-09-27</IntrBkSttlmDt>
+            <IntrBkSttlmDt>2025-09-30</IntrBkSttlmDt>
             <SttlmInf>
                 <SttlmMtd>CLRG</SttlmMtd>
                 <ClrSys>
@@ -16,9 +16,9 @@
         </GrpHdr>
         <CdtTrfTxInf>
             <PmtId>
-                <InstrId>INSTR648674008</InstrId>
-                <EndToEndId>E2E648674008</EndToEndId>
-                <TxId>TX648674008</TxId>
+                <InstrId>INSTR674199008</InstrId>
+                <EndToEndId>E2E674200008</EndToEndId>
+                <TxId>TX674200008</TxId>
             </PmtId>
             <PmtTpInf>
                 <SvcLvl>
@@ -35,12 +35,12 @@
             <ChrgBr>SLEV</ChrgBr>
             <InstgAgt>
                 <FinInstnId>
-                    <BICFI>DEFAULT_InstgAgtBICFI_1758278648682</BICFI>
+                    <BICFI>DEFAULT_InstgAgtBICFI_1758515674200</BICFI>
                 </FinInstnId>
             </InstgAgt>
             <InstdAgt>
                 <FinInstnId>
-                    <BICFI>DEFAULT_InstdAgtBICFI_1758278648685</BICFI>
+                    <BICFI>DEFAULT_InstdAgtBICFI_1758515674200</BICFI>
                 </FinInstnId>
             </InstdAgt>
             <Dbtr>
@@ -48,7 +48,7 @@
             </Dbtr>
             <DbtrAcct>
                 <Id>
-                    <IBAN>DEFAULT_DbtrAcctIban_1758278648695</IBAN>
+                    <IBAN>DEFAULT_DbtrAcctIban_1758515674200</IBAN>
                 </Id>
                 <Nm>James Martinez Account</Nm>
             </DbtrAcct>
@@ -67,7 +67,7 @@
             </Cdtr>
             <CdtrAcct>
                 <Id>
-                    <IBAN>DEFAULT_CdtrAcctIban_1758278648699</IBAN>
+                    <IBAN>DEFAULT_CdtrAcctIban_1758515674200</IBAN>
                 </Id>
                 <Nm>James Martinez Account</Nm>
             </CdtrAcct>

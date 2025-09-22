@@ -2,11 +2,11 @@
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08">
     <FIToFICstmrCdtTrf>
         <GrpHdr>
-            <MsgId>MSG648351004</MsgId>
-            <CreDtTm>2025-09-19T16:18:08.3514008</CreDtTm>
+            <MsgId>MSG674079004</MsgId>
+            <CreDtTm>2025-09-22T10:08:34.080657</CreDtTm>
             <NbOfTxs>1</NbOfTxs>
             <TtlIntrBkSttlmAmt Ccy="USD">10004.00</TtlIntrBkSttlmAmt>
-            <IntrBkSttlmDt>2025-09-23</IntrBkSttlmDt>
+            <IntrBkSttlmDt>2025-09-26</IntrBkSttlmDt>
             <SttlmInf>
                 <SttlmMtd>CLRG</SttlmMtd>
                 <ClrSys>
@@ -16,9 +16,9 @@
         </GrpHdr>
         <CdtTrfTxInf>
             <PmtId>
-                <InstrId>INSTR648351004</InstrId>
-                <EndToEndId>E2E648351004</EndToEndId>
-                <TxId>TX648351004</TxId>
+                <InstrId>INSTR674080004</InstrId>
+                <EndToEndId>E2E674080004</EndToEndId>
+                <TxId>TX674080004</TxId>
             </PmtId>
             <PmtTpInf>
                 <SvcLvl>
@@ -35,12 +35,12 @@
             <ChrgBr>SLEV</ChrgBr>
             <InstgAgt>
                 <FinInstnId>
-                    <BICFI>DEFAULT_InstgAgtBICFI_1758278648352</BICFI>
+                    <BICFI>DEFAULT_InstgAgtBICFI_1758515674080</BICFI>
                 </FinInstnId>
             </InstgAgt>
             <InstdAgt>
                 <FinInstnId>
-                    <BICFI>DEFAULT_InstdAgtBICFI_1758278648353</BICFI>
+                    <BICFI>DEFAULT_InstdAgtBICFI_1758515674081</BICFI>
                 </FinInstnId>
             </InstdAgt>
             <Dbtr>
@@ -48,7 +48,7 @@
             </Dbtr>
             <DbtrAcct>
                 <Id>
-                    <IBAN>DEFAULT_DbtrAcctIban_1758278648353</IBAN>
+                    <IBAN>DEFAULT_DbtrAcctIban_1758515674081</IBAN>
                 </Id>
                 <Nm>Michael Wilson Account</Nm>
             </DbtrAcct>
@@ -67,7 +67,7 @@
             </Cdtr>
             <CdtrAcct>
                 <Id>
-                    <IBAN>DEFAULT_CdtrAcctIban_1758278648355</IBAN>
+                    <IBAN>DEFAULT_CdtrAcctIban_1758515674081</IBAN>
                 </Id>
                 <Nm>Michael Wilson Account</Nm>
             </CdtrAcct>

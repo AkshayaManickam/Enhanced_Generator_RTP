@@ -2,11 +2,11 @@
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08">
     <FIToFICstmrCdtTrf>
         <GrpHdr>
-            <MsgId>MSG648308003</MsgId>
-            <CreDtTm>2025-09-19T16:17:08.3095658</CreDtTm>
+            <MsgId>MSG674040003</MsgId>
+            <CreDtTm>2025-09-22T10:07:34.04085</CreDtTm>
             <NbOfTxs>1</NbOfTxs>
             <TtlIntrBkSttlmAmt Ccy="USD">5003.00</TtlIntrBkSttlmAmt>
-            <IntrBkSttlmDt>2025-09-22</IntrBkSttlmDt>
+            <IntrBkSttlmDt>2025-09-25</IntrBkSttlmDt>
             <SttlmInf>
                 <SttlmMtd>CLRG</SttlmMtd>
                 <ClrSys>
@@ -16,9 +16,9 @@
         </GrpHdr>
         <CdtTrfTxInf>
             <PmtId>
-                <InstrId>INSTR648309003</InstrId>
-                <EndToEndId>E2E648310003</EndToEndId>
-                <TxId>TX648310003</TxId>
+                <InstrId>INSTR674040003</InstrId>
+                <EndToEndId>E2E674040003</EndToEndId>
+                <TxId>TX674040003</TxId>
             </PmtId>
             <PmtTpInf>
                 <SvcLvl>
@@ -35,12 +35,12 @@
             <ChrgBr>SLEV</ChrgBr>
             <InstgAgt>
                 <FinInstnId>
-                    <BICFI>DEFAULT_InstgAgtBICFI_1758278648311</BICFI>
+                    <BICFI>DEFAULT_InstgAgtBICFI_1758515674041</BICFI>
                 </FinInstnId>
             </InstgAgt>
             <InstdAgt>
                 <FinInstnId>
-                    <BICFI>DEFAULT_InstdAgtBICFI_1758278648311</BICFI>
+                    <BICFI>DEFAULT_InstdAgtBICFI_1758515674041</BICFI>
                 </FinInstnId>
             </InstdAgt>
             <Dbtr>
@@ -48,7 +48,7 @@
             </Dbtr>
             <DbtrAcct>
                 <Id>
-                    <IBAN>DEFAULT_DbtrAcctIban_1758278648312</IBAN>
+                    <IBAN>DEFAULT_DbtrAcctIban_1758515674042</IBAN>
                 </Id>
                 <Nm>Emily Davis Account</Nm>
             </DbtrAcct>
@@ -67,7 +67,7 @@
             </Cdtr>
             <CdtrAcct>
                 <Id>
-                    <IBAN>DEFAULT_CdtrAcctIban_1758278648312</IBAN>
+                    <IBAN>DEFAULT_CdtrAcctIban_1758515674042</IBAN>
                 </Id>
                 <Nm>Emily Davis Account</Nm>
             </CdtrAcct>

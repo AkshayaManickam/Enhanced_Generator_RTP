@@ -2,11 +2,11 @@
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08">
     <FIToFICstmrCdtTrf>
         <GrpHdr>
-            <MsgId>MSG648589007</MsgId>
-            <CreDtTm>2025-09-19T16:21:08.5895269</CreDtTm>
+            <MsgId>MSG674170007</MsgId>
+            <CreDtTm>2025-09-22T10:11:34.1707566</CreDtTm>
             <NbOfTxs>1</NbOfTxs>
             <TtlIntrBkSttlmAmt Ccy="USD">500007.00</TtlIntrBkSttlmAmt>
-            <IntrBkSttlmDt>2025-09-26</IntrBkSttlmDt>
+            <IntrBkSttlmDt>2025-09-29</IntrBkSttlmDt>
             <SttlmInf>
                 <SttlmMtd>CLRG</SttlmMtd>
                 <ClrSys>
@@ -16,9 +16,9 @@
         </GrpHdr>
         <CdtTrfTxInf>
             <PmtId>
-                <InstrId>INSTR648589007</InstrId>
-                <EndToEndId>E2E648589007</EndToEndId>
-                <TxId>TX648589007</TxId>
+                <InstrId>INSTR674170007</InstrId>
+                <EndToEndId>E2E674170007</EndToEndId>
+                <TxId>TX674170007</TxId>
             </PmtId>
             <PmtTpInf>
                 <SvcLvl>
@@ -35,12 +35,12 @@
             <ChrgBr>SLEV</ChrgBr>
             <InstgAgt>
                 <FinInstnId>
-                    <BICFI>DEFAULT_InstgAgtBICFI_1758278648592</BICFI>
+                    <BICFI>DEFAULT_InstgAgtBICFI_1758515674171</BICFI>
                 </FinInstnId>
             </InstgAgt>
             <InstdAgt>
                 <FinInstnId>
-                    <BICFI>DEFAULT_InstdAgtBICFI_1758278648594</BICFI>
+                    <BICFI>DEFAULT_InstdAgtBICFI_1758515674173</BICFI>
                 </FinInstnId>
             </InstdAgt>
             <Dbtr>
@@ -48,7 +48,7 @@
             </Dbtr>
             <DbtrAcct>
                 <Id>
-                    <IBAN>DEFAULT_DbtrAcctIban_1758278648594</IBAN>
+                    <IBAN>DEFAULT_DbtrAcctIban_1758515674173</IBAN>
                 </Id>
                 <Nm>Lisa Garcia Account</Nm>
             </DbtrAcct>
@@ -67,7 +67,7 @@
             </Cdtr>
             <CdtrAcct>
                 <Id>
-                    <IBAN>DEFAULT_CdtrAcctIban_1758278648595</IBAN>
+                    <IBAN>DEFAULT_CdtrAcctIban_1758515674173</IBAN>
                 </Id>
                 <Nm>Lisa Garcia Account</Nm>
             </CdtrAcct>

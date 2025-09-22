@@ -2,11 +2,11 @@
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08">
     <FIToFICstmrCdtTrf>
         <GrpHdr>
-            <MsgId>MSG648221001</MsgId>
-            <CreDtTm>2025-09-19T16:15:08.222258</CreDtTm>
+            <MsgId>MSG673922001</MsgId>
+            <CreDtTm>2025-09-22T10:05:33.9236093</CreDtTm>
             <NbOfTxs>1</NbOfTxs>
             <TtlIntrBkSttlmAmt Ccy="USD">101.00</TtlIntrBkSttlmAmt>
-            <IntrBkSttlmDt>2025-09-20</IntrBkSttlmDt>
+            <IntrBkSttlmDt>2025-09-23</IntrBkSttlmDt>
             <SttlmInf>
                 <SttlmMtd>CLRG</SttlmMtd>
                 <ClrSys>
@@ -16,9 +16,9 @@
         </GrpHdr>
         <CdtTrfTxInf>
             <PmtId>
-                <InstrId>INSTR648222001</InstrId>
-                <EndToEndId>E2E648222001</EndToEndId>
-                <TxId>TX648223001</TxId>
+                <InstrId>INSTR673924001</InstrId>
+                <EndToEndId>E2E673924001</EndToEndId>
+                <TxId>TX673924001</TxId>
             </PmtId>
             <PmtTpInf>
                 <SvcLvl>
@@ -35,12 +35,12 @@
             <ChrgBr>SLEV</ChrgBr>
             <InstgAgt>
                 <FinInstnId>
-                    <BICFI>DEFAULT_InstgAgtBICFI_1758278648223</BICFI>
+                    <BICFI>DEFAULT_InstgAgtBICFI_1758515673925</BICFI>
                 </FinInstnId>
             </InstgAgt>
             <InstdAgt>
                 <FinInstnId>
-                    <BICFI>DEFAULT_InstdAgtBICFI_1758278648226</BICFI>
+                    <BICFI>DEFAULT_InstdAgtBICFI_1758515673925</BICFI>
                 </FinInstnId>
             </InstdAgt>
             <Dbtr>
@@ -48,7 +48,7 @@
             </Dbtr>
             <DbtrAcct>
                 <Id>
-                    <IBAN>DEFAULT_DbtrAcctIban_1758278648228</IBAN>
+                    <IBAN>DEFAULT_DbtrAcctIban_1758515673925</IBAN>
                 </Id>
                 <Nm>Jane Smith Account</Nm>
             </DbtrAcct>
@@ -67,7 +67,7 @@
             </Cdtr>
             <CdtrAcct>
                 <Id>
-                    <IBAN>DEFAULT_CdtrAcctIban_1758278648229</IBAN>
+                    <IBAN>DEFAULT_CdtrAcctIban_1758515673925</IBAN>
                 </Id>
                 <Nm>Jane Smith Account</Nm>
             </CdtrAcct>
