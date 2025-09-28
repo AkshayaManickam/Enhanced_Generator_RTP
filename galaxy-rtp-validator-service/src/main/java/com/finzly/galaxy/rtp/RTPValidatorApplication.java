@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @ComponentScan(value = {
-                "com.finzly.galaxy.rtp"
+                "com.finzly.galaxy.rtp",
+        "com.swapstech.galaxy.security.client"
 })
 @EnableJpaRepositories(basePackages = { "com.finzly.galaxy.rtp.validator.repository" })
 @EntityScan(basePackages = {
