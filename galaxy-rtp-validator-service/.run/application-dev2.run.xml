@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="application-local-dev2" type="Application" factoryName="Application">
+  <configuration default="false" name="application-dev2" type="Application" factoryName="Application">
     <envs>
       <env name="env" value="dev2" />
       <env name="config-url" value="https://config:Finzly%40123@bankos-config-test2.finzly.net/config" />
