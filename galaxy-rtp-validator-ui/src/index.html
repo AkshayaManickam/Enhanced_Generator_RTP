@@ -1,53 +1,13 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Galaxy RTP Validator</title>
-  <base href=".">
+  <title>GalaxyRtpValidatorUi</title>
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
-  <link
-      rel="stylesheet"
-      href="https://s3.us-east-2.amazonaws.com/bankos.finzly.net/component/galaxy-common.css"
-    />
-
-  <script>
-    function init() {
-      history.pushState = (f =>
-        function pushState() {
-          var ret = f.apply(this, arguments);
-          window.dispatchEvent(new Event("pushstate"));
-          window.dispatchEvent(new Event("locationchange"));
-          return ret;
-        })(history.pushState);
-
-      history.replaceState = (f =>
-        function replaceState() {
-          var ret = f.apply(this, arguments);
-          window.dispatchEvent(new Event("replacestate"));
-          window.dispatchEvent(new Event("locationchange"));
-          return ret;
-        })(history.replaceState);
-
-      window.addEventListener("popstate", () => {
-        window.dispatchEvent(new Event("locationchange"));
-      });
-      window.addEventListener("locationchange", function () {
-        if (location.href.replace(/:/g, "/").split('/').includes('localhost')) {
-          window.parent.window.postMessage({ for: "user", data: location.href }, "http://localhost:4200");
-        } else {
-          window.parent.window.postMessage({ for: "user", data: location.href }, location.origin);
-        }
-      });
-    }
-    init();
-  </script>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
-<body class="overflow-hidden">
+<body>
   <app-root></app-root>
 </body>
 </html>

@@ -40,16 +40,3 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
-
-# Maven build artifacts (removed)
-/target/
-
-# Environment files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Logs
-*.log

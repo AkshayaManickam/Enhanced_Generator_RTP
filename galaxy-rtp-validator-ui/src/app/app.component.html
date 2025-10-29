@@ -1,6 +1,382 @@
-<div class="min-h-screen bg-gray-50">
-  <app-header></app-header>
-  <main class="container mx-auto px-4 py-8">
-    <router-outlet></router-outlet>
-  </main>
+<div class="app-container">
+  <!-- Header with Wizard Progress -->
+  <header class="app-header">
+    <div class="header-content">
+      <h1>{{ title }}</h1>
+      <p class="subtitle">Create compliant ISO 20022 messages with intelligent tag selection</p>
+    </div>
+    
+    <!-- Step Indicator -->
+    <div class="step-indicator">
+      <div class="step" [ngClass]="getStepClass(1)" (click)="goToStep(1)">
+        <div class="step-number">1</div>
+        <div class="step-label">Select Tags</div>
+      </div>
+      <div class="step-line" [class.active]="currentStep > 1"></div>
+      <div class="step" [ngClass]="getStepClass(2)">
+        <div class="step-number">2</div>
+        <div class="step-label">Configure</div>
+      </div>
+      <div class="step-line" [class.active]="currentStep > 2"></div>
+      <div class="step" [ngClass]="getStepClass(3)">
+        <div class="step-number">3</div>
+        <div class="step-label">Preview</div>
+      </div>
+      <div class="step-line" [class.active]="currentStep > 3"></div>
+      <div class="step" [ngClass]="getStepClass(4)">
+        <div class="step-number">4</div>
+        <div class="step-label">Results</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Message Banner -->
+  <div class="message-banner" *ngIf="message" [ngClass]="'message-' + messageType">
+    <span>{{ message }}</span>
+    <button class="close-btn" (click)="message = ''">×</button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    
+    <!-- STEP 1: Select Tags -->
+    <div class="wizard-step" *ngIf="currentStep === 1">
+      <div class="step-header">
+        <h2>Step 1: Select Tags</h2>
+        <p>Choose optional tags to include in your XML message. Top-level mandatory tags are pre-selected and cannot be deselected.</p>
+      </div>
+
+      <div class="content-layout">
+        <!-- Statistics Sidebar -->
+        <aside class="stats-sidebar">
+          <div class="stats-card" *ngIf="statistics">
+            <h3>Selection Statistics</h3>
+            <div class="stat-item">
+              <span class="stat-label">Total Tags</span>
+              <span class="stat-value">{{ statistics.totalTags }}</span>
+            </div>
+            <div class="stat-item mandatory">
+              <span class="stat-label">Mandatory</span>
+              <span class="stat-value">{{ statistics.mandatoryTags }}</span>
+            </div>
+            <div class="stat-item optional">
+              <span class="stat-label">Optional</span>
+              <span class="stat-value">{{ statistics.optionalTags }}</span>
+            </div>
+            <div class="stat-item conditional">
+              <span class="stat-label">Conditional</span>
+              <span class="stat-value">{{ statistics.conditionalTags }}</span>
+            </div>
+            <div class="stat-item selected">
+              <span class="stat-label">Selected</span>
+              <span class="stat-value">{{ statistics.selectedTags }}</span>
+            </div>
+          </div>
+
+          <div class="legend-card">
+            <h3>Legend</h3>
+            <div class="legend-item">
+              <span class="badge mandatory">M</span>
+              <span>Mandatory (Auto-selected by system - Cannot be deselected)</span>
+            </div>
+            <div class="legend-item">
+              <span class="badge optional">O</span>
+              <span>Optional (User selectable)</span>
+            </div>
+            <div class="legend-item">
+              <span class="badge conditional">C</span>
+              <span>Conditional (Blocked by system - Cannot be selected)</span>
+            </div>
+            <div class="legend-note">
+              <p><strong>Note:</strong> When you select an optional tag, all its mandatory children are automatically selected. When you deselect an optional tag, all its children are deselected.</p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Tag Tree -->
+        <main class="tag-selection-area">
+          <!-- Search Bar -->
+          <div class="search-bar">
+            <input 
+              type="text" 
+              [(ngModel)]="searchQuery" 
+              (keyup.enter)="onSearch()"
+              placeholder="Search tags by name, element, or index..."
+              class="search-input"
+            />
+            <button (click)="onSearch()" class="btn btn-primary">
+              <span class="icon">🔍</span> Search
+            </button>
+            <button (click)="searchQuery = ''; loadTags()" class="btn btn-secondary" *ngIf="searchQuery">
+              Clear
+            </button>
+          </div>
+
+          <!-- Loading Indicator -->
+          <div class="loading" *ngIf="loading">
+            <div class="spinner"></div>
+            <p>Loading tags...</p>
+          </div>
+
+          <!-- Tag Tree -->
+          <div class="tag-tree" *ngIf="!loading">
+            <div class="tree-header">
+              <div class="col-checkbox"></div>
+              <div class="col-index">INDEX</div>
+              <div class="col-xmltag">XML TAG</div>
+              <div class="col-element">ELEMENT NAME</div>
+              <div class="col-occurrence">OCCURRENCE</div>
+              <div class="col-length">LENGTH</div>
+              <div class="col-type">TYPE</div>
+            </div>
+
+            <div class="tree-body">
+              <ng-container *ngFor="let tag of tags">
+                <ng-container *ngTemplateOutlet="tagNode; context: { tag: tag }"></ng-container>
+              </ng-container>
+            </div>
+          </div>
+
+          <!-- No Results -->
+          <div class="no-results" *ngIf="!loading && tags.length === 0">
+            <p>No tags found. Try a different search term.</p>
+          </div>
+        </main>
+      </div>
+
+      <!-- Step Actions -->
+      <div class="step-actions">
+        <button class="btn btn-secondary" (click)="resetWizard()">Reset</button>
+        <button class="btn btn-primary" (click)="nextStep()">Next: Configure →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Configure -->
+    <div class="wizard-step" *ngIf="currentStep === 2">
+      <div class="step-header">
+        <h2>Step 2: Review Selection</h2>
+        <p>Review your selected optional tags. The system will generate 2<sup>n</sup> combinations where n = number of selected optional tags.</p>
+      </div>
+
+      <div class="config-content">
+        <div class="info-card">
+          <h3>📊 Combination Logic</h3>
+          <p>Based on your selection, the generator will create multiple XML message variations:</p>
+          <ul>
+            <li>Each combination represents a different set of included optional tags</li>
+            <li>Mandatory tags are included in all combinations</li>
+            <li>Total combinations: <strong>2<sup>{{ getSelectedOptionalTags().length }}</sup> = {{ Math.pow(2, getSelectedOptionalTags().length) }}</strong></li>
+          </ul>
+        </div>
+
+        <div class="selected-tags-card">
+          <h3>Selected Optional Tags ({{ getSelectedOptionalTags().length }})</h3>
+          <div class="selected-tags-list">
+            <div class="selected-tag-item" *ngFor="let tag of getSelectedOptionalTags()">
+              <span class="tag-index">{{ tag.index }}</span>
+              <span class="tag-name">{{ tag.xmlTag }}</span>
+              <span class="tag-element">{{ tag.elementName }}</span>
+            </div>
+            <div class="empty-state" *ngIf="getSelectedOptionalTags().length === 0">
+              <p>No optional tags selected. Please go back and select at least one optional tag.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="warning-card" *ngIf="getSelectedOptionalTags().length > 10">
+          <h3>⚠️ Warning</h3>
+          <p>You have selected {{ getSelectedOptionalTags().length }} optional tags, which will generate {{ Math.pow(2, getSelectedOptionalTags().length) }} combinations. This may take some time to process.</p>
+        </div>
+      </div>
+
+      <!-- Step Actions -->
+      <div class="step-actions">
+        <button class="btn btn-secondary" (click)="previousStep()">← Back</button>
+        <button class="btn btn-primary" (click)="nextStep()">Next: Generate →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Preview & Generate -->
+    <div class="wizard-step" *ngIf="currentStep === 3">
+      <div class="step-header">
+        <h2>Step 3: Generate XML Combinations</h2>
+        <p>Generating ISO 20022 compliant pacs.008 XML messages...</p>
+      </div>
+
+      <div class="generation-content">
+        <!-- Generating State -->
+        <div class="generating-state" *ngIf="generating">
+          <div class="spinner-large"></div>
+          <h3>Generating XML Combinations...</h3>
+          <p>This may take a moment depending on the number of combinations.</p>
+        </div>
+
+        <!-- Generation Complete -->
+        <div class="generation-results" *ngIf="generationResult && !generating">
+          <div class="result-summary" [class.success]="generationResult.success" [class.error]="!generationResult.success">
+            <div class="result-icon">{{ generationResult.success ? '✓' : '✗' }}</div>
+            <div class="result-details">
+              <h3>{{ generationResult.message }}</h3>
+              <div class="result-stats" *ngIf="generationResult.success">
+                <div class="stat">
+                  <span class="stat-label">Total Combinations:</span>
+                  <span class="stat-value">{{ generationResult.totalCombinations }}</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Generation Time:</span>
+                  <span class="stat-value">{{ generationResult.generationTimeMs }}ms</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Combinations List -->
+          <div class="combinations-list" *ngIf="generationResult.success && generationResult.combinations">
+            <h3>Generated Combinations ({{ generationResult.combinations.length }})</h3>
+            <div class="combination-grid">
+              <div class="combination-card" *ngFor="let combination of generationResult.combinations">
+                <div class="combination-header">
+                  <span class="combination-number">#{{ combination.combinationNumber }}</span>
+                  <span class="combination-description">{{ combination.description }}</span>
+                </div>
+                <div class="combination-tags" *ngIf="combination.includedOptionalTags.length > 0">
+                  <span class="tag-chip" *ngFor="let tagName of combination.includedOptionalTags">{{ tagName }}</span>
+                </div>
+                <div class="combination-actions">
+                  <button class="btn btn-sm btn-secondary" (click)="viewCombination(combination)">
+                    👁️ Preview
+                  </button>
+                  <button class="btn btn-sm btn-primary" (click)="downloadCombination(combination)">
+                    💾 Download
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step Actions -->
+      <div class="step-actions">
+        <button class="btn btn-secondary" (click)="previousStep()">← Back</button>
+        <button class="btn btn-primary" (click)="nextStep()" *ngIf="generationResult && generationResult.success">
+          Next: View Results →
+        </button>
+        <button class="btn btn-secondary" (click)="generateCombinations()" *ngIf="generationResult && !generationResult.success">
+          🔄 Retry
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Results -->
+    <div class="wizard-step" *ngIf="currentStep === 4">
+      <div class="step-header">
+        <h2>Step 4: Download & Review</h2>
+        <p>Your XML messages have been generated successfully. Download individual files or all at once.</p>
+      </div>
+
+      <div class="results-content" *ngIf="generationResult">
+        <div class="results-header">
+          <div class="results-summary">
+            <div class="summary-stat">
+              <div class="stat-value-large">{{ generationResult.totalCombinations }}</div>
+              <div class="stat-label">XML Files Generated</div>
+            </div>
+            <div class="summary-stat">
+              <div class="stat-value-large">{{ getSelectedOptionalTags().length }}</div>
+              <div class="stat-label">Optional Tags Selected</div>
+            </div>
+            <div class="summary-stat">
+              <div class="stat-value-large">{{ generationResult.generationTimeMs }}ms</div>
+              <div class="stat-label">Generation Time</div>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-lg" (click)="downloadAllCombinations()">
+            📥 Download All ({{ generationResult.totalCombinations }} files)
+          </button>
+        </div>
+
+        <!-- XML Preview -->
+        <div class="xml-preview-section">
+          <div class="combinations-sidebar">
+            <h3>Combinations</h3>
+            <div class="combination-list-item" 
+                 *ngFor="let combination of generationResult.combinations"
+                 [class.active]="selectedCombination?.combinationNumber === combination.combinationNumber"
+                 (click)="viewCombination(combination)">
+              <div class="item-number">#{{ combination.combinationNumber }}</div>
+              <div class="item-description">{{ combination.description }}</div>
+              <button class="btn-download-mini" (click)="downloadCombination(combination); $event.stopPropagation()">💾</button>
+            </div>
+          </div>
+
+          <div class="xml-preview-panel">
+            <div class="preview-header" *ngIf="selectedCombination">
+              <h3>Combination #{{ selectedCombination.combinationNumber }}</h3>
+              <p>{{ selectedCombination.description }}</p>
+              <button class="btn btn-primary" (click)="downloadCombination(selectedCombination)">
+                💾 Download This File
+              </button>
+            </div>
+            <div class="xml-content" *ngIf="selectedCombination">
+              <pre><code>{{ selectedCombination.xmlContent }}</code></pre>
+            </div>
+            <div class="empty-preview" *ngIf="!selectedCombination">
+              <p>Select a combination from the list to preview its XML content</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step Actions -->
+      <div class="step-actions">
+        <button class="btn btn-secondary" (click)="resetWizard()">🔄 Start Over</button>
+        <button class="btn btn-secondary" (click)="previousStep()">← Back to Generation</button>
+      </div>
+    </div>
+
+  </div>
 </div>
+
+<!-- Recursive Tag Node Template -->
+<ng-template #tagNode let-tag="tag">
+  <div class="tag-row" [ngClass]="getTagClass(tag.type)" [style]="getIndentStyle(tag.level)">
+    <div class="tag-row-content">
+      <div class="col-checkbox">
+        <button 
+          class="expand-btn" 
+          *ngIf="tag.children && tag.children.length > 0"
+          (click)="toggleExpand(tag.index)">
+          {{ isExpanded(tag.index) ? '▼' : '▶' }}
+        </button>
+        <input 
+          type="checkbox" 
+          [checked]="tag.selected"
+          [disabled]="isCheckboxDisabled(tag)"
+          (change)="onTagToggle(tag, $event)"
+          [title]="getCheckboxTooltip(tag)"
+        />
+      </div>
+      <div class="col-index">{{ tag.index }}</div>
+      <div class="col-xmltag">
+        <span class="xml-tag-name">{{ tag.xmlTag }}</span>
+        <span class="or-condition" *ngIf="tag.orCondition">(Or)</span>
+      </div>
+      <div class="col-element" [title]="tag.elementName">{{ tag.elementName }}</div>
+      <div class="col-occurrence">{{ tag.occurrence }}</div>
+      <div class="col-length">{{ tag.length || '-' }}</div>
+      <div class="col-type">
+        <span class="type-badge" [ngClass]="getTagClass(tag.type)">
+          {{ tag.type }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Render children recursively -->
+  <ng-container *ngIf="isExpanded(tag.index) && tag.children && tag.children.length > 0">
+    <ng-container *ngFor="let child of tag.children">
+      <ng-container *ngTemplateOutlet="tagNode; context: { tag: child }"></ng-container>
+    </ng-container>
+  </ng-container>
+</ng-template>
