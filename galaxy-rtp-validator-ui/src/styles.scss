@@ -1,1 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Highlight optional tags in XML preview */
+.optional-tag {
+  background-color: #d4edda !important;
+  border-radius: 2px;
+  padding: 1px 2px;
+  display: inline;
+}

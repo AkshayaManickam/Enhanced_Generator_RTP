@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TagService } from './services/tag.service';
 import { XmlTag, TagStatistics, TagType, XmlGenerationResult, XmlCombination } from './models/tag.model';
 
@@ -16,7 +17,7 @@ export class AppComponent implements OnInit {
   
   // Wizard steps
   currentStep: number = 1;
-  totalSteps: number = 4;
+  totalSteps: number = 3;
   
   // Tag data
   tags: XmlTag[] = [];
@@ -35,7 +36,7 @@ export class AppComponent implements OnInit {
   TagType = TagType;
   Math = Math; // Expose Math to template
 
-  constructor(private tagService: TagService) {}
+  constructor(private tagService: TagService, private sanitizer: DomSanitizer) {}
 
   // Check if checkbox should be disabled
   isCheckboxDisabled(tag: XmlTag): boolean {
@@ -77,12 +78,14 @@ export class AppComponent implements OnInit {
         }
       }
       
-      this.currentStep++;
-      
-      if (this.currentStep === 3 && !this.generationResult) {
-        // Auto-generate on step 3
-        this.generateCombinations();
+      if (this.currentStep === 2) {
+        // Auto-generate when moving from step 2 to step 3
+        if (!this.generationResult) {
+          this.generateCombinations();
+        }
       }
+      
+      this.currentStep++;
     }
   }
 
@@ -414,6 +417,43 @@ export class AppComponent implements OnInit {
     this.selectedCombination = combination;
   }
 
+  // Process XML to highlight tags
+  getHighlightedXml(xmlContent: string): SafeHtml {
+    if (!xmlContent) return '';
+    
+    console.log('Original XML contains markers:', xmlContent.includes('<!--OPTIONAL_START-->'));
+    console.log('First 500 chars of XML:', xmlContent.substring(0, 500));
+    
+    // First, escape HTML characters EXCEPT our markers
+    let processed = xmlContent
+      // Temporarily replace our markers with placeholders
+      .replace(/<!--OPTIONAL_START-->/g, '___OPTIONAL_START___')
+      .replace(/<!--OPTIONAL_END-->/g, '___OPTIONAL_END___')
+      .replace(/<!--OPTIONAL_TAG-->/g, '___OPTIONAL_TAG___')
+      // Escape all HTML special characters
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;')
+      // Now replace placeholders with HTML spans
+      .replace(/___OPTIONAL_START___/g, '<span class="optional-tag">')
+      .replace(/___OPTIONAL_END___/g, '</span>')
+      .replace(/___OPTIONAL_TAG___/g, '');
+    
+    // Highlight all XML tags in dark color
+    // Match opening tags: <tagname...>
+    processed = processed.replace(/&lt;([^\/\s][^&gt;]*)&gt;/g, '<span class="xml-tag-bracket">&lt;</span><span class="xml-tag">$1</span><span class="xml-tag-bracket">&gt;</span>');
+    // Match closing tags: </tagname>
+    processed = processed.replace(/&lt;(\/[^&gt;]+)&gt;/g, '<span class="xml-tag-bracket">&lt;</span><span class="xml-tag">$1</span><span class="xml-tag-bracket">&gt;</span>');
+    
+    console.log('Processed XML contains spans:', processed.includes('<span class="optional-tag">'));
+    console.log('First 500 chars of processed:', processed.substring(0, 500));
+    
+    // Use DomSanitizer to bypass Angular's security
+    return this.sanitizer.bypassSecurityTrustHtml(processed);
+  }
+
   downloadCombination(combination: XmlCombination): void {
     const blob = new Blob([combination.xmlContent], { type: 'application/xml' });
     const url = window.URL.createObjectURL(blob);
@@ -423,6 +463,17 @@ export class AppComponent implements OnInit {
     link.click();
     window.URL.revokeObjectURL(url);
     this.showMessage(`Downloaded combination ${combination.combinationNumber}`, 'success');
+  }
+
+  copyCombination(combination: XmlCombination): void {
+    // Copy the raw XML content (without HTML markers) to clipboard
+    const rawXml = combination.xmlContent;
+    navigator.clipboard.writeText(rawXml).then(() => {
+      this.showMessage('XML copied to clipboard', 'success');
+    }).catch(err => {
+      console.error('Failed to copy:', err);
+      this.showMessage('Failed to copy XML', 'error');
+    });
   }
 
   downloadAllCombinations(): void {

@@ -20,11 +20,6 @@
       <div class="step-line" [class.active]="currentStep > 2"></div>
       <div class="step" [ngClass]="getStepClass(3)">
         <div class="step-number">3</div>
-        <div class="step-label">Preview</div>
-      </div>
-      <div class="step-line" [class.active]="currentStep > 3"></div>
-      <div class="step" [ngClass]="getStepClass(4)">
-        <div class="step-number">4</div>
         <div class="step-label">Results</div>
       </div>
     </div>
@@ -72,28 +67,7 @@
               <span class="stat-value">{{ statistics.selectedTags }}</span>
             </div>
           </div>
-
-          <div class="legend-card">
-            <h3>Legend</h3>
-            <div class="legend-item">
-              <span class="badge mandatory">M</span>
-              <span>Mandatory (Auto-selected by system - Cannot be deselected)</span>
-            </div>
-            <div class="legend-item">
-              <span class="badge optional">O</span>
-              <span>Optional (User selectable)</span>
-            </div>
-            <div class="legend-item">
-              <span class="badge conditional">C</span>
-              <span>Conditional (Blocked by system - Cannot be selected)</span>
-            </div>
-            <div class="legend-note">
-              <p><strong>Note:</strong> When you select an optional tag, all its mandatory children are automatically selected. When you deselect an optional tag, all its children are deselected.</p>
-            </div>
-          </div>
         </aside>
-
-        <!-- Tag Tree -->
         <main class="tag-selection-area">
           <!-- Search Bar -->
           <div class="search-bar">
@@ -105,7 +79,7 @@
               class="search-input"
             />
             <button (click)="onSearch()" class="btn btn-primary">
-              <span class="icon">🔍</span> Search
+              Search
             </button>
             <button (click)="searchQuery = ''; loadTags()" class="btn btn-secondary" *ngIf="searchQuery">
               Clear
@@ -147,7 +121,7 @@
       <!-- Step Actions -->
       <div class="step-actions">
         <button class="btn btn-secondary" (click)="resetWizard()">Reset</button>
-        <button class="btn btn-primary" (click)="nextStep()">Next: Configure →</button>
+        <button class="btn btn-primary" (click)="nextStep()">Next: Generate & View Results →</button>
       </div>
     </div>
 
@@ -159,16 +133,6 @@
       </div>
 
       <div class="config-content">
-        <div class="info-card">
-          <h3>📊 Combination Logic</h3>
-          <p>Based on your selection, the generator will create multiple XML message variations:</p>
-          <ul>
-            <li>Each combination represents a different set of included optional tags</li>
-            <li>Mandatory tags are included in all combinations</li>
-            <li>Total combinations: <strong>2<sup>{{ getSelectedOptionalTags().length }}</sup> = {{ Math.pow(2, getSelectedOptionalTags().length) }}</strong></li>
-          </ul>
-        </div>
-
         <div class="selected-tags-card">
           <h3>Selected Optional Tags ({{ getSelectedOptionalTags().length }})</h3>
           <div class="selected-tags-list">
@@ -192,86 +156,14 @@
       <!-- Step Actions -->
       <div class="step-actions">
         <button class="btn btn-secondary" (click)="previousStep()">← Back</button>
-        <button class="btn btn-primary" (click)="nextStep()">Next: Generate →</button>
+        <button class="btn btn-primary" (click)="nextStep()">Next: Generate & View Results →</button>
       </div>
     </div>
 
-    <!-- STEP 3: Preview & Generate -->
+    <!-- STEP 3: Results -->
     <div class="wizard-step" *ngIf="currentStep === 3">
       <div class="step-header">
-        <h2>Step 3: Generate XML Combinations</h2>
-        <p>Generating ISO 20022 compliant pacs.008 XML messages...</p>
-      </div>
-
-      <div class="generation-content">
-        <!-- Generating State -->
-        <div class="generating-state" *ngIf="generating">
-          <div class="spinner-large"></div>
-          <h3>Generating XML Combinations...</h3>
-          <p>This may take a moment depending on the number of combinations.</p>
-        </div>
-
-        <!-- Generation Complete -->
-        <div class="generation-results" *ngIf="generationResult && !generating">
-          <div class="result-summary" [class.success]="generationResult.success" [class.error]="!generationResult.success">
-            <div class="result-icon">{{ generationResult.success ? '✓' : '✗' }}</div>
-            <div class="result-details">
-              <h3>{{ generationResult.message }}</h3>
-              <div class="result-stats" *ngIf="generationResult.success">
-                <div class="stat">
-                  <span class="stat-label">Total Combinations:</span>
-                  <span class="stat-value">{{ generationResult.totalCombinations }}</span>
-                </div>
-                <div class="stat">
-                  <span class="stat-label">Generation Time:</span>
-                  <span class="stat-value">{{ generationResult.generationTimeMs }}ms</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Combinations List -->
-          <div class="combinations-list" *ngIf="generationResult.success && generationResult.combinations">
-            <h3>Generated Combinations ({{ generationResult.combinations.length }})</h3>
-            <div class="combination-grid">
-              <div class="combination-card" *ngFor="let combination of generationResult.combinations">
-                <div class="combination-header">
-                  <span class="combination-number">#{{ combination.combinationNumber }}</span>
-                  <span class="combination-description">{{ combination.description }}</span>
-                </div>
-                <div class="combination-tags" *ngIf="combination.includedOptionalTags.length > 0">
-                  <span class="tag-chip" *ngFor="let tagName of combination.includedOptionalTags">{{ tagName }}</span>
-                </div>
-                <div class="combination-actions">
-                  <button class="btn btn-sm btn-secondary" (click)="viewCombination(combination)">
-                    👁️ Preview
-                  </button>
-                  <button class="btn btn-sm btn-primary" (click)="downloadCombination(combination)">
-                    💾 Download
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Step Actions -->
-      <div class="step-actions">
-        <button class="btn btn-secondary" (click)="previousStep()">← Back</button>
-        <button class="btn btn-primary" (click)="nextStep()" *ngIf="generationResult && generationResult.success">
-          Next: View Results →
-        </button>
-        <button class="btn btn-secondary" (click)="generateCombinations()" *ngIf="generationResult && !generationResult.success">
-          🔄 Retry
-        </button>
-      </div>
-    </div>
-
-    <!-- STEP 4: Results -->
-    <div class="wizard-step" *ngIf="currentStep === 4">
-      <div class="step-header">
-        <h2>Step 4: Download & Review</h2>
+        <h2>Step 3: Download & Review</h2>
         <p>Your XML messages have been generated successfully. Download individual files or all at once.</p>
       </div>
 
@@ -292,7 +184,7 @@
             </div>
           </div>
           <button class="btn btn-primary btn-lg" (click)="downloadAllCombinations()">
-            📥 Download All ({{ generationResult.totalCombinations }} files)
+            Generate Report
           </button>
         </div>
 
@@ -304,22 +196,23 @@
                  *ngFor="let combination of generationResult.combinations"
                  [class.active]="selectedCombination?.combinationNumber === combination.combinationNumber"
                  (click)="viewCombination(combination)">
-              <div class="item-number">#{{ combination.combinationNumber }}</div>
+              <div class="item-number">{{ combination.combinationNumber }}</div>
               <div class="item-description">{{ combination.description }}</div>
-              <button class="btn-download-mini" (click)="downloadCombination(combination); $event.stopPropagation()">💾</button>
+              <button class="btn-download-mini" (click)="downloadCombination(combination); $event.stopPropagation()"></button>
             </div>
           </div>
 
           <div class="xml-preview-panel">
-            <div class="preview-header" *ngIf="selectedCombination">
-              <h3>Combination #{{ selectedCombination.combinationNumber }}</h3>
-              <p>{{ selectedCombination.description }}</p>
+            <div class="preview-actions" *ngIf="selectedCombination">
               <button class="btn btn-primary" (click)="downloadCombination(selectedCombination)">
-                💾 Download This File
+                Download
+              </button>
+              <button class="btn btn-secondary" (click)="copyCombination(selectedCombination)">
+                Copy
               </button>
             </div>
             <div class="xml-content" *ngIf="selectedCombination">
-              <pre><code>{{ selectedCombination.xmlContent }}</code></pre>
+              <pre><code [innerHTML]="getHighlightedXml(selectedCombination.xmlContent)"></code></pre>
             </div>
             <div class="empty-preview" *ngIf="!selectedCombination">
               <p>Select a combination from the list to preview its XML content</p>
@@ -330,8 +223,8 @@
 
       <!-- Step Actions -->
       <div class="step-actions">
-        <button class="btn btn-secondary" (click)="resetWizard()">🔄 Start Over</button>
-        <button class="btn btn-secondary" (click)="previousStep()">← Back to Generation</button>
+        <button class="btn btn-secondary" (click)="resetWizard()">Start Over</button>
+        <button class="btn btn-secondary" (click)="previousStep()">← Back to Configuration</button>
       </div>
     </div>
 
