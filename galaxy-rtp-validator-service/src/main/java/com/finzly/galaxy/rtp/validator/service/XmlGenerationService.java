@@ -2,7 +2,6 @@ package com.finzly.galaxy.rtp.validator.service;
 
 import com.finzly.galaxy.rtp.validator.dto.XmlCombination;
 import com.finzly.galaxy.rtp.validator.dto.XmlGenerationResult;
-import com.finzly.galaxy.rtp.validator.model.TagType;
 import com.finzly.galaxy.rtp.validator.model.XmlTag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,13 +13,19 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.*;
 
 @Service
 public class XmlGenerationService {
 
     @Autowired
     private TagDataService tagDataService;
+    
+    // Cache for tag lookups to avoid recursive searches
+    private Map<String, XmlTag> tagCache;
+    
+    // Virtual Thread Executor for parallel processing
+    private final ExecutorService virtualThreadExecutor = Executors.newVirtualThreadPerTaskExecutor();
 
     public XmlGenerationResult generateXmlCombinations(List<String> selectedIndices) {
         long startTime = System.currentTimeMillis();
@@ -29,60 +34,111 @@ public class XmlGenerationService {
             // Get all tags
             List<XmlTag> allTags = tagDataService.getAllTags();
             
-            // Identify selected optional tags
-            List<XmlTag> selectedOptionalTags = new ArrayList<>();
-            for (String index : selectedIndices) {
-                XmlTag tag = findTagByIndex(allTags, index);
-                if (tag != null && tag.isOptional()) {
-                    selectedOptionalTags.add(tag);
-                }
+            // Build tag cache for O(1) lookups
+            tagCache = buildTagCache(allTags);
+            System.out.println("Built tag cache with " + tagCache.size() + " entries");
+            
+            // Build a hierarchical structure of selected optional tags
+            List<OptionalTagNode> optionalTagHierarchy = buildOptionalTagHierarchy(allTags, selectedIndices);
+            
+            System.out.println("=== Optional Tag Hierarchy ===");
+            for (OptionalTagNode node : optionalTagHierarchy) {
+                printNodeHierarchy(node, 0);
             }
-
-            // Generate combinations (2^n)
-            int n = selectedOptionalTags.size();
-            int totalCombinations = (int) Math.pow(2, n);
-            List<XmlCombination> combinations = new ArrayList<>();
-
-            for (int i = 0; i < totalCombinations; i++) {
-                List<XmlTag> includedOptionalTags = new ArrayList<>();
-                List<String> includedTagNames = new ArrayList<>();
-
-                // Determine which optional tags to include in this combination
-                for (int j = 0; j < n; j++) {
-                    if ((i & (1 << j)) != 0) {
-                        XmlTag optionalTag = selectedOptionalTags.get(j);
-                        includedOptionalTags.add(optionalTag);
-                        includedTagNames.add(optionalTag.getXmlTag());
-                    }
-                }
-
-                // Generate XML for this combination
-                String xmlContent = generateXmlForCombination(allTags, includedOptionalTags, selectedIndices);
+            
+            // Generate all combinations considering parent-child relationships
+            List<Set<String>> allCombinations = generateNestedCombinations(optionalTagHierarchy);
+            
+            System.out.println("\n=== Generated " + allCombinations.size() + " combinations ===");
+            
+            // Limit combinations if too many
+            int maxCombinations = 5000; // Safety limit
+            if (allCombinations.size() > maxCombinations) {
+                return XmlGenerationResult.builder()
+                    .success(false)
+                    .message("Too many combinations (" + allCombinations.size() + "). Maximum allowed is " + maxCombinations + ". Please select fewer optional tags.")
+                    .totalCombinations(0)
+                    .combinations(new ArrayList<>())
+                    .generationTimeMs(System.currentTimeMillis() - startTime)
+                    .build();
+            }
+            
+            // Use ConcurrentHashMap for thread-safe collection
+            ConcurrentLinkedQueue<XmlCombination> combinations = new ConcurrentLinkedQueue<>();
+            
+            // Process combinations in parallel using virtual threads
+            List<CompletableFuture<XmlCombination>> futures = new ArrayList<>();
+            int combinationNumber = 1;
+            
+            for (Set<String> combinationIndices : allCombinations) {
+                final int currentCombinationNumber = combinationNumber++;
                 
-                String description = includedTagNames.isEmpty() 
-                    ? "Base message (mandatory tags only)" 
-                    : "With: " + String.join(", ", includedTagNames);
-
-                combinations.add(XmlCombination.builder()
-                        .combinationNumber(i + 1)
-                        .description(description)
-                        .includedOptionalTags(includedTagNames)
-                        .xmlContent(xmlContent)
-                        .build());
+                CompletableFuture<XmlCombination> future = CompletableFuture.supplyAsync(() -> {
+                    try {
+                        return processSingleCombination(allTags, combinationIndices, selectedIndices, currentCombinationNumber);
+                    } catch (Exception e) {
+                        System.err.println("Error processing combination " + currentCombinationNumber + ": " + e.getMessage());
+                        e.printStackTrace();
+                        return null;
+                    }
+                }, virtualThreadExecutor);
+                
+                futures.add(future);
             }
-
+            
+            // Wait for all combinations to complete
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+            
+            // Collect results
+            for (CompletableFuture<XmlCombination> future : futures) {
+                try {
+                    XmlCombination combo = future.get();
+                    if (combo != null) {
+                        combinations.add(combo);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error retrieving combination: " + e.getMessage());
+                }
+            }
+            
+            // Sort by combination number
+            List<XmlCombination> sortedCombinations = new ArrayList<>(combinations);
+            sortedCombinations.sort(Comparator.comparingInt(XmlCombination::getCombinationNumber));
+            
             long endTime = System.currentTimeMillis();
+            
+            // Clear cache to free memory
+            tagCache.clear();
 
             return XmlGenerationResult.builder()
                     .success(true)
-                    .message("Successfully generated " + totalCombinations + " XML message combinations")
-                    .totalCombinations(totalCombinations)
-                    .combinations(combinations)
+                    .message("Successfully generated " + sortedCombinations.size() + " XML message combinations")
+                    .totalCombinations(sortedCombinations.size())
+                    .combinations(sortedCombinations)
                     .generationTimeMs(endTime - startTime)
                     .build();
 
+        } catch (OutOfMemoryError e) {
+            long endTime = System.currentTimeMillis();
+            e.printStackTrace();
+            // Clear cache on OOM
+            if (tagCache != null) {
+                tagCache.clear();
+            }
+            return XmlGenerationResult.builder()
+                    .success(false)
+                    .message("Out of memory error. Please select fewer optional tags (current: " + selectedIndices.size() + "). Try selecting 10-15 tags at a time.")
+                    .totalCombinations(0)
+                    .combinations(new ArrayList<>())
+                    .generationTimeMs(endTime - startTime)
+                    .build();
         } catch (Exception e) {
             long endTime = System.currentTimeMillis();
+            e.printStackTrace();
+            // Clear cache on error
+            if (tagCache != null) {
+                tagCache.clear();
+            }
             return XmlGenerationResult.builder()
                     .success(false)
                     .message("Error generating XML: " + e.getMessage())
@@ -90,6 +146,305 @@ public class XmlGenerationService {
                     .combinations(new ArrayList<>())
                     .generationTimeMs(endTime - startTime)
                     .build();
+        }
+    }
+    
+    /**
+     * Build a cache map for O(1) tag lookups
+     */
+    private Map<String, XmlTag> buildTagCache(List<XmlTag> tags) {
+        Map<String, XmlTag> cache = new HashMap<>();
+        buildTagCacheRecursive(tags, cache);
+        return cache;
+    }
+    
+    private void buildTagCacheRecursive(List<XmlTag> tags, Map<String, XmlTag> cache) {
+        for (XmlTag tag : tags) {
+            cache.put(tag.getIndex(), tag);
+            if (tag.getChildren() != null && !tag.getChildren().isEmpty()) {
+                buildTagCacheRecursive(tag.getChildren(), cache);
+            }
+        }
+    }
+    
+    /**
+     * Process a single combination
+     */
+    private XmlCombination processSingleCombination(List<XmlTag> allTags, Set<String> combinationIndices, 
+                                                     List<String> selectedIndices, int combinationNumber) {
+        // Get the actual tags for this combination using cached lookups
+        List<XmlTag> includedOptionalTags = new ArrayList<>();
+        List<String> includedTagNames = new ArrayList<>();
+        
+        for (String index : combinationIndices) {
+            XmlTag tag = tagCache.get(index); // O(1) lookup
+            if (tag != null) {
+                includedOptionalTags.add(tag);
+                includedTagNames.add(tag.getXmlTag());
+            }
+        }
+        
+        // Generate XML for this combination
+        String xmlContent = generateXmlForCombination(allTags, includedOptionalTags, selectedIndices);
+        
+        String description = includedTagNames.isEmpty() 
+            ? "Base message (mandatory tags only)" 
+            : "With: " + String.join(", ", includedTagNames);
+
+        return XmlCombination.builder()
+                .combinationNumber(combinationNumber)
+                .description(description)
+                .includedOptionalTags(includedTagNames)
+                .xmlContent(xmlContent)
+                .build();
+    }
+    
+    // Helper class to represent optional tag hierarchy
+    private static class OptionalTagNode {
+        String index;
+        String name;
+        List<OptionalTagNode> children = new ArrayList<>();
+        
+        OptionalTagNode(String index, String name) {
+            this.index = index;
+            this.name = name;
+        }
+    }
+    
+    /**
+     * Build a hierarchical structure of selected optional tags
+     * This identifies parent-child relationships among optional tags using the actual tag hierarchy
+     */
+    private List<OptionalTagNode> buildOptionalTagHierarchy(List<XmlTag> allTags, List<String> selectedIndices) {
+        List<OptionalTagNode> rootNodes = new ArrayList<>();
+        Map<String, OptionalTagNode> nodeMap = new HashMap<>();
+        Map<String, XmlTag> tagMap = new HashMap<>();
+        
+        // First pass: Create nodes for all selected optional tags and map them
+        for (String index : selectedIndices) {
+            XmlTag tag = findTagByIndex(allTags, index);
+            if (tag != null && tag.isOptional()) {
+                OptionalTagNode node = new OptionalTagNode(index, tag.getXmlTag());
+                nodeMap.put(index, node);
+                tagMap.put(index, tag);
+            }
+        }
+        
+        // Second pass: Build parent-child relationships using actual tag hierarchy
+        // For each selected tag, check if its actual parent (from tag structure) is also selected
+        for (Map.Entry<String, OptionalTagNode> entry : nodeMap.entrySet()) {
+            String index = entry.getKey();
+            OptionalTagNode node = entry.getValue();
+            XmlTag tag = tagMap.get(index);
+            
+            // Find the actual parent of this tag in the tag hierarchy
+            XmlTag parentTag = findParentTag(allTags, tag);
+            
+            boolean hasParent = false;
+            if (parentTag != null && parentTag.isOptional()) {
+                // Check if this parent is in our selected nodes
+                OptionalTagNode parentNode = nodeMap.get(parentTag.getIndex());
+                if (parentNode != null) {
+                    // Parent is selected - add this node as a child
+                    parentNode.children.add(node);
+                    hasParent = true;
+                }
+            }
+            
+            // If no parent found in selected nodes, it's a root node
+            if (!hasParent) {
+                rootNodes.add(node);
+            }
+        }
+        
+        return rootNodes;
+    }
+    
+    /**
+     * Find the parent tag of a given tag in the tag hierarchy
+     */
+    private XmlTag findParentTag(List<XmlTag> allTags, XmlTag targetTag) {
+        for (XmlTag tag : allTags) {
+            XmlTag parent = findParentTagRecursive(tag, targetTag, null);
+            if (parent != null) {
+                return parent;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Recursively find the parent of a target tag
+     */
+    private XmlTag findParentTagRecursive(XmlTag currentTag, XmlTag targetTag, XmlTag potentialParent) {
+        if (currentTag.getIndex().equals(targetTag.getIndex())) {
+            return potentialParent;
+        }
+        
+        for (XmlTag child : currentTag.getChildren()) {
+            XmlTag parent = findParentTagRecursive(child, targetTag, currentTag);
+            if (parent != null) {
+                return parent;
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Generate all combinations considering parent-child relationships
+     * For each optional parent with optional children:
+     * - Include parent with all combinations of children
+     * - Exclude parent (and implicitly all children)
+     */
+    private List<Set<String>> generateNestedCombinations(List<OptionalTagNode> nodes) {
+        List<Set<String>> allCombinations = new ArrayList<>();
+        
+        // Start with empty combination (base message with mandatory tags only)
+        allCombinations.add(new HashSet<>());
+        
+        // For each root optional tag
+        for (OptionalTagNode node : nodes) {
+            List<Set<String>> newCombinations = new ArrayList<>();
+            
+            // Get all combinations for this node (with its children)
+            List<Set<String>> nodeCombinations = generateNodeCombinations(node);
+            
+            System.out.println("\n=== Node: " + node.name + " (" + node.index + ") ===");
+            System.out.println("Generated " + nodeCombinations.size() + " combinations:");
+            for (Set<String> combo : nodeCombinations) {
+                System.out.println("  " + combo);
+            }
+            
+            // For each existing combination, create new ones
+            for (Set<String> existingCombo : allCombinations) {
+                // Add combination without this node (keep existing combo as is)
+                newCombinations.add(new HashSet<>(existingCombo));
+                
+                // Add combinations with this node in various child configurations
+                for (Set<String> nodeCombo : nodeCombinations) {
+                    Set<String> newCombo = new HashSet<>(existingCombo);
+                    newCombo.addAll(nodeCombo);
+                    newCombinations.add(newCombo);
+                }
+            }
+            
+            allCombinations = newCombinations;
+        }
+        
+        return allCombinations;
+    }
+    
+    /**
+     * Generate combinations for a single node and its children - RECURSIVE
+     * 
+     * KEY INSIGHT: When user selects nested optional tags, the parent should only appear
+     * in combinations where at least one of its selected children is also present.
+     * 
+     * For each node:
+     * 1. If no children (leaf node): return just the node
+     * 2. If has children:
+     *    - Node with all combinations of selected children
+     *    - Do NOT include "parent only" because children were selected by user
+     * 
+     * Example: UltimateCreditor -> PostalAddress -> [BuildingNo, AddressLine]
+     * When user selects all 4 tags, returns 4 combinations from the deepest level:
+     * - { UC, PA, BuildingNo }                    // UC + PA + BuildingNo only
+     * - { UC, PA, AddressLine }                   // UC + PA + AddressLine only
+     * - { UC, PA, BuildingNo, AddressLine }       // UC + PA + both grandchildren
+     * - { UC, PA }                                // UC + PA only (when PA has no grandchildren)
+     * 
+     * Note: { UC } alone is NOT included because PA was selected by user
+     */
+    private List<Set<String>> generateNodeCombinations(OptionalTagNode node) {
+        List<Set<String>> combinations = new ArrayList<>();
+        
+        if (node.children.isEmpty()) {
+            // Leaf node - just include the node itself
+            Set<String> combo = new HashSet<>();
+            combo.add(node.index);
+            combinations.add(combo);
+        } else {
+            // Node has children - generate combinations recursively
+            
+            // Get all child combinations first (each child recursively expands)
+            List<List<Set<String>>> childCombinationsList = new ArrayList<>();
+            
+            for (OptionalTagNode child : node.children) {
+                // Recursively get combinations for this child
+                List<Set<String>> childCombos = generateNodeCombinations(child);
+                childCombinationsList.add(childCombos);
+            }
+            
+            // Generate power set of children indices (2^n - 1 combinations, excluding empty)
+            // We exclude the empty set (i=0) because if children are selected, 
+            // at least one must be present
+            int n = node.children.size();
+            int totalChildCombos = (int) Math.pow(2, n);
+            
+            for (int i = 1; i < totalChildCombos; i++) { // Start from 1 to exclude parent-only
+                List<Integer> selectedChildIndices = new ArrayList<>();
+                for (int j = 0; j < n; j++) {
+                    if ((i & (1 << j)) != 0) {
+                        selectedChildIndices.add(j);
+                    }
+                }
+                
+                // Generate Cartesian product of selected children's combinations
+                List<Set<String>> cartesianProduct = generateCartesianProduct(
+                    selectedChildIndices, childCombinationsList, node.index
+                );
+                combinations.addAll(cartesianProduct);
+            }
+        }
+        
+        return combinations;
+    }
+    
+    /**
+     * Generate Cartesian product of selected children's combinations
+     * 
+     * Example: If child0 has combos [{A}, {A,B}] and child1 has combos [{C}, {C,D}]
+     * Result: [{parent,A,C}, {parent,A,C,D}, {parent,A,B,C}, {parent,A,B,C,D}]
+     */
+    private List<Set<String>> generateCartesianProduct(
+        List<Integer> selectedChildIndices, 
+        List<List<Set<String>>> childCombinationsList,
+        String parentIndex) {
+        
+        List<Set<String>> result = new ArrayList<>();
+        
+        // Start with a single empty set containing just the parent
+        result.add(new HashSet<>(Collections.singleton(parentIndex)));
+        
+        // For each selected child, expand the combinations
+        for (Integer childIndex : selectedChildIndices) {
+            List<Set<String>> childCombos = childCombinationsList.get(childIndex);
+            List<Set<String>> newResult = new ArrayList<>();
+            
+            // For each existing combination, combine with each child combo
+            for (Set<String> existingCombo : result) {
+                for (Set<String> childCombo : childCombos) {
+                    Set<String> merged = new HashSet<>(existingCombo);
+                    merged.addAll(childCombo);
+                    newResult.add(merged);
+                }
+            }
+            
+            result = newResult;
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Print node hierarchy for debugging
+     */
+    private void printNodeHierarchy(OptionalTagNode node, int depth) {
+        String indent = "  ".repeat(depth);
+        System.out.println(indent + "- " + node.name + " (" + node.index + ")");
+        for (OptionalTagNode child : node.children) {
+            printNodeHierarchy(child, depth + 1);
         }
     }
 

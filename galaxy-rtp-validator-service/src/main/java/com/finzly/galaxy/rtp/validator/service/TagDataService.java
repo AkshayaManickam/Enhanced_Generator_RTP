@@ -570,16 +570,16 @@ public class TagDataService {
         
         strd.getChildren().add(rfrdDocAmt);
         
-        // CdtrRefInf (Creditor Reference Information) - [0..1] - OPTIONAL
-        XmlTag cdtrRefInf = createTag(index + ".78", "CdtrRefInf", "Creditor Reference Information", "[0..1]", null, TagType.OPTIONAL, level + 2);
-        XmlTag cdtrRefId = createTag(index + ".102", "Id", "Identification", "[1..1]", null, TagType.MANDATORY, level + 3);
-        XmlTag cdtrOrgId = createTag(index + ".103", "OrgId", "Organisation Identification", "[1..1]", null, TagType.MANDATORY, level + 4);
-        XmlTag cdtrOthr = createTag(index + ".106", "Othr", "Other", "[1..1]", null, TagType.MANDATORY, level + 5);
-        cdtrOthr.getChildren().add(createTag(index + ".107", "Id", "Identification", "[1..1]", 35, TagType.MANDATORY, level + 6));
-        cdtrOrgId.getChildren().add(cdtrOthr);
-        cdtrRefId.getChildren().add(cdtrOrgId);
-        cdtrRefInf.getChildren().add(cdtrRefId);
-        strd.getChildren().add(cdtrRefInf);
+        // Invcr (Invoicer) - [0..1] - OPTIONAL
+        XmlTag invcr = createTag(index + ".78", "Invcr", "Invoicer", "[0..1]", null, TagType.OPTIONAL, level + 2);
+        XmlTag invcrId = createTag(index + ".102", "Id", "Identification", "[1..1]", null, TagType.MANDATORY, level + 3);
+        XmlTag invcrOrgId = createTag(index + ".103", "OrgId", "Organisation Identification", "[1..1]", null, TagType.MANDATORY, level + 4);
+        XmlTag invcrOthr = createTag(index + ".106", "Othr", "Other", "[1..1]", null, TagType.MANDATORY, level + 5);
+        invcrOthr.getChildren().add(createTag(index + ".107", "Id", "Identification", "[1..1]", 35, TagType.MANDATORY, level + 6));
+        invcrOrgId.getChildren().add(invcrOthr);
+        invcrId.getChildren().add(invcrOrgId);
+        invcr.getChildren().add(invcrId);
+        strd.getChildren().add(invcr);
         
         // Invcee (Invoicee) - [0..1] - OPTIONAL
         XmlTag invcee = createTag(index + ".140", "Invcee", "Invoicee", "[0..1]", null, TagType.OPTIONAL, level + 2);

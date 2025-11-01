@@ -44,8 +44,33 @@
       <div class="content-layout">
         <!-- Statistics Sidebar -->
         <aside class="stats-sidebar">
+          <!-- Selection Limit Card -->
+          <div class="selection-limit-card" [ngClass]="getSelectionStatusClass()">
+            <h3>Optional Tags Selection</h3>
+            <div class="limit-counter">
+              <div class="counter-display">
+                <span class="counter-current">{{ getSelectedOptionalTags().length }}</span>
+                <span class="counter-separator">/</span>
+                <span class="counter-max">{{ MAX_OPTIONAL_TAGS }}</span>
+              </div>
+              <div class="counter-label">Tags Selected</div>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar" [style.width.%]="getSelectionProgress()"></div>
+            </div>
+            <div class="limit-badge" *ngIf="isSelectionLimitReached()">
+              Maximum limit reached
+            </div>
+            <div class="limit-badge warning" *ngIf="!isSelectionLimitReached() && getSelectedOptionalTags().length >= 10">
+              {{ MAX_OPTIONAL_TAGS - getSelectedOptionalTags().length }} slot{{ MAX_OPTIONAL_TAGS - getSelectedOptionalTags().length > 1 ? 's' : '' }} remaining
+            </div>
+            <p class="limit-info" *ngIf="getSelectedOptionalTags().length < 10">
+              Select up to {{ MAX_OPTIONAL_TAGS }} optional tags
+            </p>
+          </div>
+
           <div class="stats-card" *ngIf="statistics">
-            <h3>Selection Statistics</h3>
+            <h3>Tag Statistics</h3>
             <div class="stat-item">
               <span class="stat-label">Total Tags</span>
               <span class="stat-value">{{ statistics.totalTags }}</span>
@@ -147,9 +172,11 @@
           </div>
         </div>
 
-        <div class="warning-card" *ngIf="getSelectedOptionalTags().length > 10">
-          <h3>⚠️ Warning</h3>
-          <p>You have selected {{ getSelectedOptionalTags().length }} optional tags, which will generate {{ Math.pow(2, getSelectedOptionalTags().length) }} combinations. This may take some time to process.</p>
+        <div class="info-card compact">
+          <p>
+            <strong>Note:</strong> You have selected <strong>{{ getSelectedOptionalTags().length }}</strong> optional tags 
+            (max {{ MAX_OPTIONAL_TAGS }}), which will generate <strong>{{ Math.pow(2, getSelectedOptionalTags().length) }}</strong> combinations.
+          </p>
         </div>
       </div>
 
@@ -167,7 +194,38 @@
         <p>Your XML messages have been generated successfully. Download individual files or all at once.</p>
       </div>
 
-      <div class="results-content" *ngIf="generationResult">
+      <!-- Loading/Generating State -->
+      <div class="generating-state" *ngIf="isGenerating">
+        <div class="generating-animation">
+          <div class="pulse-loader">
+            <div class="pulse-dot"></div>
+            <div class="pulse-dot"></div>
+            <div class="pulse-dot"></div>
+          </div>
+          <h3>Generating XML Combinations</h3>
+          <p class="generating-message">Please wait while we generate all possible combinations...</p>
+          <div class="progress-info">
+            <div class="spinner-border"></div>
+            <p class="progress-text">Processing {{ getSelectedOptionalTags().length }} optional tags</p>
+            <p class="progress-subtext">This may take a few moments for large selections</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div class="error-state" *ngIf="generationError && !isGenerating">
+        <div class="error-content">
+          <div class="error-icon">⚠️</div>
+          <h3>Generation Failed</h3>
+          <p class="error-message">{{ generationError }}</p>
+          <div class="error-actions">
+            <button class="btn btn-secondary" (click)="previousStep()">← Go Back</button>
+            <button class="btn btn-primary" (click)="retryGeneration()">Try Again</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="results-content" *ngIf="generationResult && !isGenerating && !generationError">
         <div class="results-header">
           <div class="results-summary">
             <div class="summary-stat">
@@ -233,7 +291,7 @@
 
 <!-- Recursive Tag Node Template -->
 <ng-template #tagNode let-tag="tag">
-  <div class="tag-row" [ngClass]="getTagClass(tag.type)" [style]="getIndentStyle(tag.level)">
+  <div class="tag-row" [ngClass]="getTagClass(tag.type, tag)" [style]="getIndentStyle(tag.level)">
     <div class="tag-row-content">
       <div class="col-checkbox">
         <button 
@@ -259,7 +317,7 @@
       <div class="col-occurrence">{{ tag.occurrence }}</div>
       <div class="col-length">{{ tag.length || '-' }}</div>
       <div class="col-type">
-        <span class="type-badge" [ngClass]="getTagClass(tag.type)">
+        <span class="type-badge" [ngClass]="getTagClass(tag.type, tag)">
           {{ tag.type }}
         </span>
       </div>

@@ -15,6 +15,9 @@ import { XmlTag, TagStatistics, TagType, XmlGenerationResult, XmlCombination } f
 export class AppComponent implements OnInit {
   title = 'PACS.008 Message Generator';
   
+  // Constants
+  readonly MAX_OPTIONAL_TAGS = 12;
+  
   // Wizard steps
   currentStep: number = 1;
   totalSteps: number = 3;
@@ -27,10 +30,15 @@ export class AppComponent implements OnInit {
   message: string = '';
   messageType: 'success' | 'error' | 'info' = 'info';
   expandedNodes: Set<string> = new Set();
+  tagMap: Map<string, XmlTag> = new Map(); // Map to track all tags by index
+  parentMap: Map<string, string> = new Map(); // Map to track parent relationships (child index -> parent index)
+  conditionalAncestorCache: Map<string, boolean> = new Map(); // Cache for conditional ancestor checks
 
   // Generation results
   generationResult: XmlGenerationResult | null = null;
   generating: boolean = false;
+  isGenerating: boolean = false;
+  generationError: string = '';
   selectedCombination: XmlCombination | null = null;
 
   TagType = TagType;
@@ -40,7 +48,23 @@ export class AppComponent implements OnInit {
 
   // Check if checkbox should be disabled
   isCheckboxDisabled(tag: XmlTag): boolean {
-    return tag.type === TagType.MANDATORY || tag.type === TagType.CONDITIONAL;
+    // Disable if tag itself is MANDATORY or CONDITIONAL
+    if (tag.type === TagType.MANDATORY || tag.type === TagType.CONDITIONAL) {
+      return true;
+    }
+    
+    // Disable OPTIONAL tags if any ancestor is CONDITIONAL
+    // Only check if maps are initialized
+    if (tag.type === TagType.OPTIONAL && this.tagMap.size > 0 && this.hasConditionalAncestor(tag)) {
+      return true;
+    }
+    
+    // Disable OPTIONAL tags if limit reached and tag is not already selected
+    if (tag.type === TagType.OPTIONAL && !tag.selected && this.isSelectionLimitReached()) {
+      return true;
+    }
+    
+    return false;
   }
 
   // Get tooltip text based on tag type and selection state
@@ -51,7 +75,92 @@ export class AppComponent implements OnInit {
     if (tag.type === TagType.CONDITIONAL) {
       return 'Conditional field - Blocked by system (Cannot be selected)';
     }
+    if (tag.type === TagType.OPTIONAL && this.tagMap.size > 0 && this.hasConditionalAncestor(tag)) {
+      return 'Optional field under conditional parent - Blocked by system (Cannot be selected)';
+    }
+    if (tag.type === TagType.OPTIONAL && !tag.selected && this.isSelectionLimitReached()) {
+      return `Selection limit reached - Maximum ${this.MAX_OPTIONAL_TAGS} optional tags allowed`;
+    }
     return tag.selected ? 'Click to deselect this optional tag' : 'Click to select this optional tag';
+  }
+
+  // Check if tag has any conditional ancestor (cached)
+  hasConditionalAncestor(tag: XmlTag): boolean {
+    // Return cached result if available
+    if (this.conditionalAncestorCache.has(tag.index)) {
+      return this.conditionalAncestorCache.get(tag.index)!;
+    }
+    
+    try {
+      if (!tag || !this.tagMap || !this.parentMap || this.tagMap.size === 0) {
+        return false;
+      }
+      
+      let currentIndex = tag.index;
+      let iterations = 0;
+      const maxIterations = 100; // Prevent infinite loops
+      
+      // Traverse up the parent chain
+      while (this.parentMap.has(currentIndex) && iterations < maxIterations) {
+        const parentIndex = this.parentMap.get(currentIndex);
+        if (!parentIndex) break;
+        
+        const parentTag = this.tagMap.get(parentIndex);
+        
+        if (parentTag && parentTag.type === TagType.CONDITIONAL) {
+          // Cache the result before returning
+          this.conditionalAncestorCache.set(tag.index, true);
+          return true; // Found a conditional ancestor
+        }
+        
+        currentIndex = parentIndex;
+        iterations++;
+      }
+      
+      // Cache the result before returning
+      this.conditionalAncestorCache.set(tag.index, false);
+      return false; // No conditional ancestors found
+    } catch (error) {
+      console.error('hasConditionalAncestor: Error checking ancestor', error, tag);
+      return false; // Return safe default on error
+    }
+  }
+
+  // Build tag map and parent relationships
+  buildTagMaps(tags: XmlTag[], parentIndex: string | null = null): void {
+    if (!tags || !Array.isArray(tags)) {
+      console.warn('buildTagMaps: Invalid tags array', tags);
+      return;
+    }
+    
+    try {
+      tags.forEach(tag => {
+        if (!tag || !tag.index) {
+          console.warn('buildTagMaps: Invalid tag', tag);
+          return;
+        }
+        
+        // Add tag to map
+        this.tagMap.set(tag.index, tag);
+        
+        // If has parent, record the relationship
+        if (parentIndex) {
+          this.parentMap.set(tag.index, parentIndex);
+        }
+        
+        // Recursively process children
+        if (tag.children && Array.isArray(tag.children) && tag.children.length > 0) {
+          this.buildTagMaps(tag.children, tag.index);
+        }
+      });
+      
+      console.log('buildTagMaps: Successfully built maps', {
+        tagMapSize: this.tagMap.size,
+        parentMapSize: this.parentMap.size
+      });
+    } catch (error) {
+      console.error('buildTagMaps: Error building maps', error);
+    }
   }
 
   ngOnInit(): void {
@@ -104,10 +213,18 @@ export class AppComponent implements OnInit {
   // Load data methods
   loadTags(): void {
     this.loading = true;
+    console.log('loadTags: Starting to load tags...');
+    
     this.tagService.getAllTags().subscribe({
       next: (data) => {
+        console.log('loadTags: Received data', { dataLength: data?.length });
         this.tags = data;
-        this.loading = false;
+        
+        // Build tag maps for parent-child relationships
+        this.tagMap.clear();
+        this.parentMap.clear();
+        this.conditionalAncestorCache.clear();
+        this.buildTagMaps(this.tags);
         
         // Auto-select all top-level mandatory tags and their mandatory children
         this.autoSelectTopLevelMandatoryTags(this.tags);
@@ -117,6 +234,9 @@ export class AppComponent implements OnInit {
           this.expandedNodes.add(tag.index);
           this.expandFirstLevelChildren(tag);
         });
+        
+        this.loading = false;
+        console.log('loadTags: Finished loading, setting loading = false');
         
         // Refresh statistics after auto-selection
         this.loadStatistics();
@@ -179,6 +299,13 @@ export class AppComponent implements OnInit {
         next: (data) => {
           this.tags = data;
           this.loading = false;
+          
+          // Rebuild tag maps for search results
+          this.tagMap.clear();
+          this.parentMap.clear();
+          this.conditionalAncestorCache.clear();
+          this.buildTagMaps(this.tags);
+          
           // Expand all search results
           this.expandAllNodes(this.tags);
         },
@@ -243,6 +370,17 @@ export class AppComponent implements OnInit {
 
     // Only OPTIONAL tags can be toggled by user
     if (tag.type === TagType.OPTIONAL) {
+      // Check if trying to select a tag when limit is reached
+      if (!tag.selected && this.isSelectionLimitReached()) {
+        const selectedCount = this.getSelectedOptionalTags().length;
+        this.showMessage(
+          `Selection limit reached! You can only select up to ${this.MAX_OPTIONAL_TAGS} optional tags. Currently selected: ${selectedCount}`,
+          'error'
+        );
+        event.preventDefault();
+        return;
+      }
+      
       console.log('Toggling OPTIONAL tag');
       tag.selected = !tag.selected;
       
@@ -354,6 +492,28 @@ export class AppComponent implements OnInit {
     return this.getAllOptionalTags(this.tags).filter(tag => tag.selected);
   }
 
+  // Check if selection limit has been reached
+  isSelectionLimitReached(): boolean {
+    return this.getSelectedOptionalTags().length >= this.MAX_OPTIONAL_TAGS;
+  }
+
+  // Get selection progress percentage
+  getSelectionProgress(): number {
+    const selected = this.getSelectedOptionalTags().length;
+    return (selected / this.MAX_OPTIONAL_TAGS) * 100;
+  }
+
+  // Get selection status class
+  getSelectionStatusClass(): string {
+    const selected = this.getSelectedOptionalTags().length;
+    const percentage = (selected / this.MAX_OPTIONAL_TAGS) * 100;
+    
+    if (percentage >= 100) return 'limit-reached';
+    if (percentage >= 80) return 'limit-warning';
+    if (percentage >= 50) return 'limit-half';
+    return 'limit-ok';
+  }
+
   getAllOptionalTags(tags: XmlTag[]): XmlTag[] {
     let optionalTags: XmlTag[] = [];
     tags.forEach(tag => {
@@ -378,25 +538,51 @@ export class AppComponent implements OnInit {
       return;
     }
 
+    this.isGenerating = true;
     this.generating = true;
     this.generationResult = null;
+    this.generationError = '';
 
     this.tagService.generateXmlCombinations({ selectedTagIndices: selectedIndices }).subscribe({
       next: (result) => {
         this.generationResult = result;
+        this.isGenerating = false;
         this.generating = false;
         if (result.success) {
           this.showMessage(`Successfully generated ${result.totalCombinations} XML combinations in ${result.generationTimeMs}ms`, 'success');
+          // Auto-select first combination
+          if (result.combinations && result.combinations.length > 0) {
+            this.selectedCombination = result.combinations[0];
+          }
         } else {
+          this.generationError = result.message;
           this.showMessage(result.message, 'error');
         }
       },
       error: (error) => {
         console.error('Error generating XML combinations:', error);
-        this.showMessage('Error generating XML combinations.', 'error');
+        this.isGenerating = false;
         this.generating = false;
+        
+        // Handle specific error messages
+        let errorMessage = 'Error generating XML combinations. ';
+        if (error.status === 500) {
+          errorMessage += 'The server encountered an error. This may be due to selecting too many tags. Please try selecting fewer tags.';
+        } else if (error.error && error.error.message) {
+          errorMessage += error.error.message;
+        } else {
+          errorMessage += 'Please check your selection and try again.';
+        }
+        
+        this.generationError = errorMessage;
+        this.showMessage(errorMessage, 'error');
       }
     });
+  }
+
+  retryGeneration(): void {
+    this.generationError = '';
+    this.generateCombinations();
   }
 
   checkForConditionalTags(tags: XmlTag[]): boolean {
@@ -504,7 +690,13 @@ export class AppComponent implements OnInit {
     }, 5000);
   }
 
-  getTagClass(type: TagType): string {
+  getTagClass(type: TagType, tag?: XmlTag): string {
+    // If tag is provided and it's optional with a conditional ancestor, mark it as blocked
+    // Only check if maps are initialized
+    if (tag && tag.type === TagType.OPTIONAL && this.tagMap.size > 0 && this.hasConditionalAncestor(tag)) {
+      return 'optional-blocked';
+    }
+    
     switch (type) {
       case TagType.MANDATORY:
         return 'mandatory';

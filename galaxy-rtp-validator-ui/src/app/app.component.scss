@@ -262,7 +262,7 @@ body {
   flex-direction: column;
   gap: 1rem;
 
-  .stats-card, .legend-card {
+  .stats-card, .legend-card, .selection-limit-card {
     background: $white;
     border-radius: 8px;
     padding: 1.25rem;
@@ -385,6 +385,138 @@ body {
       }
     }
   }
+
+  // Selection Limit Card Specific Styles
+  .selection-limit-card {
+    margin-bottom: 0.5rem;
+    border: 2px solid $border-color;
+    transition: all 0.3s ease;
+
+    .limit-counter {
+      text-align: center;
+      margin-bottom: 1rem;
+
+      .counter-display {
+        font-size: 2.5rem;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+
+        .counter-current {
+          color: $primary;
+        }
+
+        .counter-separator {
+          color: $text-light;
+          margin: 0 0.25rem;
+        }
+
+        .counter-max {
+          color: $text-medium;
+          font-size: 1.875rem;
+        }
+      }
+
+      .counter-label {
+        font-size: 0.875rem;
+        color: $text-medium;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    .progress-bar-container {
+      height: 8px;
+      background: #e9ecef;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, $primary 0%, lighten($primary, 10%) 100%);
+        transition: width 0.3s ease;
+        border-radius: 4px;
+      }
+    }
+
+    .limit-badge {
+      display: inline-block;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      margin: 0.5rem 0;
+      background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.15) 100%);
+      color: darken($danger, 5%);
+      border: 1px solid rgba(220, 53, 69, 0.25);
+      width: 100%;
+
+      &.warning {
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 193, 7, 0.15) 100%);
+        color: darken($warning, 25%);
+        border: 1px solid rgba(255, 193, 7, 0.3);
+      }
+    }
+
+    .limit-info {
+      font-size: 0.75rem;
+      color: $text-medium;
+      text-align: center;
+      line-height: 1.5;
+      margin: 0.5rem 0 0;
+    }
+
+    // Status-based styling
+    &.limit-ok {
+      border-color: rgba(40, 167, 69, 0.3);
+
+      .counter-current {
+        color: $success;
+      }
+
+      .progress-bar {
+        background: linear-gradient(90deg, $success 0%, lighten($success, 10%) 100%);
+      }
+    }
+
+    &.limit-half {
+      border-color: rgba(13, 110, 253, 0.3);
+
+      .counter-current {
+        color: $primary;
+      }
+    }
+
+    &.limit-warning {
+      border-color: rgba(255, 193, 7, 0.5);
+      background: rgba(255, 193, 7, 0.02);
+
+      .counter-current {
+        color: $warning;
+      }
+
+      .progress-bar {
+        background: linear-gradient(90deg, $warning 0%, lighten($warning, 10%) 100%);
+      }
+    }
+
+    &.limit-reached {
+      border-color: rgba(220, 53, 69, 0.5);
+      background: rgba(220, 53, 69, 0.03);
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+
+      .counter-current {
+        color: $danger;
+      }
+
+      .progress-bar {
+        background: linear-gradient(90deg, $danger 0%, lighten($danger, 10%) 100%);
+      }
+    }
+  }
 }
 
 // Tag Selection Area
@@ -425,8 +557,8 @@ body {
 
   .tree-header {
     display: grid;
-    grid-template-columns: 80px 60px 140px 1fr 85px 60px 80px;
-    gap: 1rem;
+    grid-template-columns: 80px 80px 160px 1fr 100px 70px 90px;
+    gap: 0.75rem;
     padding: 1rem;
     background: $primary;
     font-weight: 700;
@@ -469,8 +601,8 @@ body {
 
   .tag-row-content {
     display: grid;
-    grid-template-columns: 80px 60px 140px 1fr 85px 60px 80px;
-    gap: 1rem;
+    grid-template-columns: 80px 80px 160px 1fr 100px 70px 90px;
+    gap: 0.75rem;
     padding: 0.75rem 1rem;
     align-items: center;
     font-size: 0.875rem;
@@ -499,6 +631,26 @@ body {
 
     .col-checkbox input[type="checkbox"] {
       pointer-events: none !important; // Ensure checkbox cannot be clicked
+      opacity: 0.3;
+      cursor: not-allowed !important;
+    }
+  }
+
+  // Optional tags under conditional parent - also blocked
+  &.optional-blocked {
+    background: #f8f9fa;
+    border-left: 3px solid #dc3545;
+    opacity: 0.5;
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+
+    &:hover {
+      background: #f8f9fa;
+      cursor: not-allowed !important;
+    }
+
+    .col-checkbox input[type="checkbox"] {
+      pointer-events: none !important;
       opacity: 0.3;
       cursor: not-allowed !important;
     }
@@ -755,6 +907,24 @@ body {
     }
   }
 
+  // Compact variant for info-card
+  .info-card.compact {
+    padding: 1rem;
+    border: 1px solid $border-color;
+    
+    p {
+      font-size: 0.875rem;
+      margin: 0;
+      line-height: 1.5;
+      color: $text-dark;
+      
+      strong {
+        color: $primary;
+        font-weight: 600;
+      }
+    }
+  }
+
   .selected-tags-list {
     display: flex;
     flex-direction: column;
@@ -764,8 +934,8 @@ body {
 
     .selected-tag-item {
       display: grid;
-      grid-template-columns: 80px 1fr 1fr;
-      gap: 1rem;
+      grid-template-columns: 80px 160px 1fr;
+      gap: 0.75rem;
       padding: 0.75rem;
       background: $hover-bg;
       border-radius: 6px;
@@ -775,15 +945,18 @@ body {
         font-family: 'Courier New', monospace;
         font-weight: 700;
         color: $text-medium;
+        font-size: 0.75rem;
       }
 
       .tag-name {
         font-weight: 600;
         color: $primary;
+        font-size: 0.875rem;
       }
 
       .tag-element {
-        color: $text-medium;
+        color: $text-dark;
+        font-size: 0.875rem;
       }
     }
 
@@ -796,34 +969,115 @@ body {
 }
 
 // Step 3: Generation
-.generation-content {
-  max-width: 1200px;
-  margin: 0 auto;
+.generating-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: $white;
+  border-radius: 12px;
+  box-shadow: $shadow-lg;
+  margin: 2rem 0;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  .generating-state {
-    text-align: center;
-    padding: 4rem 2rem;
+  .generating-animation {
+    max-width: 500px;
+    
+    .pulse-loader {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
 
-    .spinner-large {
-      width: 80px;
-      height: 80px;
-      border: 6px solid rgba(13, 110, 253, 0.2);
-      border-top-color: $primary;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 2rem;
+      .pulse-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: $primary;
+        animation: pulse 1.4s infinite ease-in-out;
+
+        &:nth-child(1) {
+          animation-delay: -0.32s;
+        }
+
+        &:nth-child(2) {
+          animation-delay: -0.16s;
+        }
+      }
     }
 
     h3 {
       font-size: 1.5rem;
       color: $primary;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
     }
 
-    p {
+    .generating-message {
+      font-size: 1rem;
       color: $text-medium;
+      margin-bottom: 2rem;
+      font-weight: 500;
+    }
+
+    .progress-info {
+      background: linear-gradient(135deg, rgba(13, 110, 253, 0.03) 0%, rgba(13, 110, 253, 0.08) 100%);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 2px solid rgba(13, 110, 253, 0.15);
+
+      .spinner-border {
+        width: 48px;
+        height: 48px;
+        border: 4px solid rgba(13, 110, 253, 0.1);
+        border-radius: 50%;
+        border-top-color: $primary;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1.5rem;
+      }
+
+      .progress-text {
+        font-size: 1rem;
+        font-weight: 600;
+        color: $primary;
+        margin-bottom: 0.5rem;
+      }
+
+      .progress-subtext {
+        font-size: 0.875rem;
+        color: $text-medium;
+        margin: 0;
+        font-style: italic;
+      }
     }
   }
+
+  .spinner-large {
+    width: 80px;
+    height: 80px;
+    border: 6px solid rgba(13, 110, 253, 0.2);
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 2rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    color: $primary;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: $text-medium;
+  }
+}
+
+.generation-content {
+  max-width: 1200px;
+  margin: 0 auto;
 
   .generation-results {
     .result-summary {
@@ -1181,6 +1435,77 @@ body {
   font-size: 1rem;
 }
 
+// Error State
+.error-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: $white;
+  border-radius: 12px;
+  box-shadow: $shadow-lg;
+  margin: 2rem 0;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .error-content {
+    max-width: 500px;
+
+    .error-icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      animation: shake 0.5s;
+    }
+
+    h3 {
+      font-size: 1.75rem;
+      color: $danger;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .error-message {
+      font-size: 1rem;
+      color: $text-medium;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background: rgba(220, 53, 69, 0.1);
+      border-radius: 6px;
+      border-left: 4px solid $danger;
+    }
+
+    .error-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+  }
+}
+
+// Animations
+@keyframes pulse {
+  0%, 80%, 100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
 // Responsive
 @media (max-width: 1200px) {
   .content-layout {
@@ -1234,6 +1559,8 @@ body {
   .tag-tree {
     .tree-header,
     .tag-row-content {
+      grid-template-columns: 60px 70px 120px 1fr 80px 50px 70px;
+      gap: 0.5rem;
       font-size: 0.688rem;
       padding: 0.5rem;
     }
