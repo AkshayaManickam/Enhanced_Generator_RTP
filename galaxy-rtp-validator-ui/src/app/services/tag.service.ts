@@ -36,5 +36,11 @@ export class TagService {
   generateXmlCombinations(request: TagSelectionRequest): Observable<XmlGenerationResult> {
     return this.http.post<XmlGenerationResult>(`${this.apiUrl}/generate-xml-combinations`, request);
   }
+
+  generateExcelReport(request: TagSelectionRequest): Observable<Blob> {
+    return this.http.post(`${this.apiUrl}/generate-excel-report`, request, {
+      responseType: 'blob'
+    });
+  }
 }
 

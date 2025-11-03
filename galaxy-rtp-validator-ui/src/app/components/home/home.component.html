@@ -1,0 +1,57 @@
+<div class="home-page">
+  <div class="home-header">
+    <h1 class="home-title">{{ title }}</h1>
+    <p class="home-subtitle">ISO 20022 PACS.008 Compliance & Testing Platform</p>
+  </div>
+
+  <div class="home-content">
+    <div class="option-cards">
+      <div class="option-card" (click)="navigateToGenerator()">
+        <div class="card-icon generate">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <h2>Generate Test Scenarios</h2>
+        <p>Create compliant ISO 20022 PACS.008 messages with intelligent tag selection and XML generation</p>
+        <div class="card-features">
+          <span class="feature-tag">Tag Selection</span>
+          <span class="feature-tag">XML Generation</span>
+          <span class="feature-tag">Combinations</span>
+        </div>
+        <button class="option-btn">Get Started →</button>
+      </div>
+
+      <div class="option-card" (click)="navigateToProcessor()">
+        <div class="card-icon process">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <h2>Process RTP Payments</h2>
+        <p>Validate and process Real-Time Payment transactions with comprehensive compliance checking</p>
+        <div class="card-features">
+          <span class="feature-tag">Validation</span>
+          <span class="feature-tag">Processing</span>
+          <span class="feature-tag">Compliance</span>
+        </div>
+        <button class="option-btn">Coming Soon</button>
+      </div>
+    </div>
+
+    <div class="home-info">
+      <div class="info-section">
+        <h3>About This Platform</h3>
+        <p>
+          This platform provides comprehensive tools for ISO 20022 PACS.008 message handling, 
+          from test scenario generation to payment processing and validation.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,203 @@
+@use 'sass:color';
+
+// Variables
+$primary: #0d6efd;
+$white: #ffffff;
+$text-dark: #212529;
+$text-medium: #6c757d;
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+.home-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 2rem 1rem;
+  height: 100vh;
+  overflow: hidden;
+  
+  .home-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    
+    .home-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: $primary;
+      margin-bottom: 0.25rem;
+      letter-spacing: -1px;
+    }
+    
+    .home-subtitle {
+      font-size: 0.9375rem;
+      color: $text-medium;
+      font-weight: 500;
+    }
+  }
+  
+  .home-content {
+    max-width: 1200px;
+    width: 100%;
+  }
+  
+  .option-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .option-card {
+    background: $white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, $primary 0%, color.adjust($primary, $lightness: 15%) 100%);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+      border-color: rgba(13, 110, 253, 0.2);
+      
+      &::before {
+        transform: scaleX(1);
+      }
+      
+      .card-icon {
+        transform: scale(1.1);
+        
+        &.generate {
+          background: linear-gradient(135deg, $primary 0%, color.adjust($primary, $lightness: 10%) 100%);
+        }
+        
+        &.process {
+          background: linear-gradient(135deg, #6c757d 0%, #868e96 100%);
+        }
+      }
+      
+      .option-btn {
+        background: $primary;
+        color: $white;
+        transform: translateX(4px);
+      }
+    }
+    
+    .card-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+      
+      &.generate {
+        background: linear-gradient(135deg, rgba(13, 110, 253, 0.1) 0%, rgba(13, 110, 253, 0.15) 100%);
+        color: $primary;
+      }
+      
+      &.process {
+        background: linear-gradient(135deg, rgba(108, 117, 125, 0.1) 0%, rgba(108, 117, 125, 0.15) 100%);
+        color: #6c757d;
+      }
+      
+      svg {
+        transition: transform 0.3s ease;
+        width: 42px;
+        height: 42px;
+      }
+    }
+    
+    h2 {
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: $text-dark;
+      margin-bottom: 0.5rem;
+    }
+    
+    p {
+      font-size: 0.875rem;
+      color: $text-medium;
+      line-height: 1.4;
+      margin-bottom: 1rem;
+    }
+    
+    .card-features {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+      
+      .feature-tag {
+        font-size: 0.6875rem;
+        font-weight: 600;
+        padding: 0.3rem 0.625rem;
+        border-radius: 10px;
+        background: rgba(13, 110, 253, 0.08);
+        color: $primary;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+    
+    .option-btn {
+      width: 100%;
+      padding: 0.75rem 1.25rem;
+      border: 2px solid $primary;
+      background: transparent;
+      color: $primary;
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: $primary;
+        color: $white;
+      }
+    }
+  }
+  
+  .home-info {
+    background: $white;
+    border-radius: 10px;
+    padding: 1.25rem;
+    box-shadow: $shadow-sm;
+    border-left: 4px solid $primary;
+    
+    .info-section {
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: $primary;
+        margin-bottom: 0.375rem;
+      }
+      
+      p {
+        font-size: 0.875rem;
+        color: $text-medium;
+        line-height: 1.4;
+        margin: 0;
+      }
+    }
+  }
+}
+
