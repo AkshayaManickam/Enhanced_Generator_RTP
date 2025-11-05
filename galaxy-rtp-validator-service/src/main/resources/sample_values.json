@@ -1,0 +1,366 @@
+{
+  "MsgId": {
+    "template": "M{YYYYMMDD}101010101MTBOTS{RANDOM_4}",
+    "description": "Message ID - Format: MYYYYMMDDbbbbbbbbbbbbBAAA + 4 random digits. Date should be current date (YYYYMMDD format). Last 4 digits should be randomly generated.",
+    "sample": "M20250927101010101MTBOTS31591625732"
+  },
+  "CreDtTm": {
+    "template": "{CURRENT_DATETIME}",
+    "description": "Creation Date Time - Should be current date and time in ISO 8601 format (YYYY-MM-DDThh:mm:ss)",
+    "sample": "2025-11-04T03:02:41"
+  },
+  "NbOfTxs": {
+    "value": "1",
+    "description": "Number of Transactions - Always 1 for RTP pacs.008 messages"
+  },
+  "TtlIntrBkSttlmAmt": {
+    "value": "92663.51",
+    "description": "Total Interbank Settlement Amount"
+  },
+  "TtlIntrBkSttlmAmt_Ccy": {
+    "value": "USD",
+    "description": "Currency code for Total Interbank Settlement Amount"
+  },
+  "IntrBkSttlmDt": {
+    "template": "{CURRENT_DATE}",
+    "description": "Interbank Settlement Date - Should be current date (YYYY-MM-DD format)",
+    "sample": "2025-11-04"
+  },
+  "SttlmMtd": {
+    "value": "CLRG",
+    "description": "Settlement Method - Only 'CLRG' allowed for RTP"
+  },
+  "ClrSys_Cd": {
+    "value": "TCH",
+    "description": "Clearing System Code - Only 'TCH' allowed for RTP (The Clearing House)"
+  },
+  "InstrId": {
+    "template": "{YYYYMMDD}101010101MTBAKSG{RANDOM_4}",
+    "description": "Instruction ID - Format: YYYYMMDD + participant info + 4 random digits. Date should be current date (YYYYMMDD format). Last 4 digits should be randomly generated.",
+    "sample": "20250927101010101MTBAKSG01167086952"
+  },
+  "EndToEndId": {
+    "value": "EOTS",
+    "description": "End To End Identification - Customer reference for the transaction"
+  },
+  "TxId": {
+    "template": "{YYYYMMDD}101010101MTBAKSG{RANDOM_4}",
+    "description": "Transaction ID - Format: YYYYMMDD + participant info + 4 random digits. Date should be current date (YYYYMMDD format). Last 4 digits should be randomly generated.",
+    "sample": "20251104101010101MTBAKSG01167076705"
+  },
+  "ClrSysRef": {
+    "value": "001",
+    "description": "Clearing System Reference"
+  },
+  "SvcLvl_Cd": {
+    "value": "SDVA",
+    "description": "Service Level Code - Only 'SDVA' allowed for RTP (Same Day Value)"
+  },
+  "LclInstrm_Prtry": {
+    "value": "STANDARD",
+    "description": "Proprietary Local Instrument Code - Identifies special use or arrangement"
+  },
+  "CtgyPurp_Prtry": {
+    "value": "CONSUMER",
+    "description": "Proprietary Category Purpose Code - Identifies Debtor/Sender as business or consumer"
+  },
+  "IntrBkSttlmAmt": {
+    "value": "92663.51",
+    "description": "Interbank Settlement Amount"
+  },
+  "IntrBkSttlmAmt_Ccy": {
+    "value": "USD",
+    "description": "Currency code for Interbank Settlement Amount"
+  },
+  "ChrgBr": {
+    "value": "SLEV",
+    "description": "Charge Bearer - Only 'SLEV' allowed for RTP (Following Service Level)"
+  },
+  "InstgAgt_MmbId": {
+    "value": "234567891",
+    "description": "Instructing Agent Member ID"
+  },
+  "InstdAgt_MmbId": {
+    "value": "071212128",
+    "description": "Instructed Agent Member ID"
+  },
+  "Dbtr_Nm": {
+    "value": "MRS. GREEN",
+    "description": "Debtor Name"
+  },
+  "Dbtr_StrtNm": {
+    "value": "Broadway",
+    "description": "Debtor Street Name"
+  },
+  "Dbtr_BldgNb": {
+    "value": "1500",
+    "description": "Debtor Building Number"
+  },
+  "Dbtr_PstCd": {
+    "value": "NY 12345",
+    "description": "Debtor Postal Code"
+  },
+  "Dbtr_TwnNm": {
+    "value": "New York",
+    "description": "Debtor Town Name"
+  },
+  "Dbtr_CtrySubDvsn": {
+    "value": "NY",
+    "description": "Debtor Country Subdivision (State)"
+  },
+  "Dbtr_Ctry": {
+    "value": "US",
+    "description": "Debtor Country"
+  },
+  "Dbtr_BirthDt": {
+    "value": "1984-01-01",
+    "description": "Debtor Birth Date"
+  },
+  "Dbtr_CityOfBirth": {
+    "value": "New York",
+    "description": "Debtor City of Birth"
+  },
+  "Dbtr_CtryOfBirth": {
+    "value": "US",
+    "description": "Debtor Country of Birth"
+  },
+  "DbtrAcct_Id": {
+    "value": "US88664715164441",
+    "description": "Debtor Account ID"
+  },
+  "DbtrAgt_MmbId": {
+    "value": "234567891",
+    "description": "Debtor Agent Member ID"
+  },
+  "CdtrAgt_MmbId": {
+    "value": "071212128",
+    "description": "Creditor Agent Member ID"
+  },
+  "Cdtr_Nm": {
+    "value": "JENNIFER MARTINEZ",
+    "description": "Creditor Name - Production-ready name"
+  },
+  "Cdtr_StrtNm": {
+    "value": "NORTH AVE",
+    "description": "Creditor Street Name"
+  },
+  "Cdtr_BldgNb": {
+    "value": "1123",
+    "description": "Creditor Building Number"
+  },
+  "Cdtr_PstCd": {
+    "value": "12344",
+    "description": "Creditor Postal Code"
+  },
+  "Cdtr_TwnNm": {
+    "value": "LOS ANGELES",
+    "description": "Creditor Town Name"
+  },
+  "Cdtr_CtrySubDvsn": {
+    "value": "LA",
+    "description": "Creditor Country Subdivision (State)"
+  },
+  "Cdtr_Ctry": {
+    "value": "US",
+    "description": "Creditor Country"
+  },
+  "Cdtr_BirthDt": {
+    "value": "1989-01-09",
+    "description": "Creditor Birth Date"
+  },
+  "Cdtr_CityOfBirth": {
+    "value": "LOS ANGELES",
+    "description": "Creditor City of Birth"
+  },
+  "Cdtr_CtryOfBirth": {
+    "value": "US",
+    "description": "Creditor Country of Birth"
+  },
+  "CdtrAcct_Id": {
+    "value": "112277",
+    "description": "Creditor Account ID"
+  },
+  "AppHdr_Fr_MmbId": {
+    "value": "990000001S1",
+    "description": "AppHdr From Member ID"
+  },
+  "AppHdr_Fr_BrnchId": {
+    "value": "101010101MT",
+    "description": "AppHdr From Branch ID"
+  },
+  "AppHdr_To_MmbId": {
+    "value": "200000026A1",
+    "description": "AppHdr To Member ID"
+  },
+  "BizMsgIdr": {
+    "template": "B{YYYYMMDD}990000001S1HOTS{RANDOM_11}",
+    "description": "Business Message Identifier - Format: B + date + participant + HOTS + 11 random digits",
+    "sample": "B20251016990000001S1HOTS01427110628"
+  },
+  "MsgDefIdr": {
+    "value": "pacs.008.001.08",
+    "description": "Message Definition Identifier"
+  },
+  "CreDt": {
+    "template": "{CURRENT_DATETIME}",
+    "description": "Creation Date - Should be current date and time in ISO 8601 format (YYYY-MM-DDThh:mm:ss)",
+    "sample": "2025-10-16T05:24:36"
+  },
+  "DigestValue": {
+    "value": "0py+eG7DBYI9PDOio88OJJnci4wi2h18tFoECW3kNUw=",
+    "description": "Digest Value for XML Signature"
+  },
+  "SignatureValue": {
+    "value": "oVcRrdghSvMREYDyp/wJ4nMu+cOPN1S18DIoJox8WBX6Y3k/wJlIM/608C+D572cDB8bVrngawseFL+BYZGJvEM3KdT//Tp4HTmFcqyTpy1yDefB1rj20KaDEJNGGA268A7CMxAFWAusz7fNEm26sH20rybp1DWDQz+RA/oSFdnus0pHIZrv6/JA5TyU0LFoGhmj3OGSqD0Iesu4PSMrGRQv7bP13hJ8ina3OvekGTIaF4yDaRbecz8w7/SJ7sbe99lmN/W+VV2JC/WfUuDpqS/TDoSdMGjxb82gGQ2u97jtsKRzI7LNXC+T/pmd9Y0JNmihKJR6MGspFi1jF0czpg==",
+    "description": "Signature Value for XML Signature"
+  },
+  "X509SubjectName": {
+    "value": "CN=Open Test Solutions,OU=OTS,O=FIS,L=Diegem,ST=Vlaams-Brabant,C=BE",
+    "description": "X509 Subject Name for XML Signature"
+  },
+  "X509IssuerName": {
+    "value": "CN=Open Test Solutions, OU=OTS, O=FIS, L=Diegem, ST=Vlaams-Brabant, C=BE",
+    "description": "X509 Issuer Name for XML Signature"
+  },
+  "X509SerialNumber": {
+    "value": "610326338160951572",
+    "description": "X509 Serial Number for XML Signature"
+  },
+  "TtlIntrBkSttlmAmt_Alt": {
+    "value": "21.2",
+    "description": "Alternative Total Interbank Settlement Amount"
+  },
+  "IntrBkSttlmAmt_Alt": {
+    "value": "21.20",
+    "description": "Alternative Interbank Settlement Amount"
+  },
+  "InstrId_Alt": {
+    "template": "{YYYYMMDD}101010101MTBUDGY001{RANDOM_11}",
+    "description": "Alternative Instruction ID format - Format: YYYYMMDD + participant info + 11 random digits",
+    "sample": "20251016101010101MTBUDGY00101397203"
+  },
+  "TxId_Alt": {
+    "template": "{YYYYMMDD}101010101MTBUDGY001{RANDOM_11}",
+    "description": "Alternative Transaction ID format - Format: YYYYMMDD + participant info + 11 random digits",
+    "sample": "20251016101010101MTBUDGY00101397203"
+  },
+  "InstdAgt_MmbId_Alt": {
+    "value": "044000037",
+    "description": "Alternative Instructed Agent Member ID"
+  },
+  "Dbtr_Nm_Alt": {
+    "value": "Anas Shaikh",
+    "description": "Alternative Debtor Name"
+  },
+  "Dbtr_StrtNm_Alt": {
+    "value": "345 Queen Stre",
+    "description": "Alternative Debtor Street Name"
+  },
+  "Dbtr_PstCd_Alt": {
+    "value": "4000 ",
+    "description": "Alternative Debtor Postal Code"
+  },
+  "Dbtr_TwnNm_Alt": {
+    "value": "Queensland",
+    "description": "Alternative Debtor Town Name"
+  },
+  "Dbtr_CtrySubDvsn_Alt": {
+    "value": "Brisbane",
+    "description": "Alternative Debtor Country Subdivision"
+  },
+  "Dbtr_AdrLine_Alt": {
+    "value": "West Corniche Road. ",
+    "description": "Alternative Debtor Address Line"
+  },
+  "DbtrAcct_Id_Alt": {
+    "value": "9901020015",
+    "description": "Alternative Debtor Account ID"
+  },
+  "CdtrAgt_MmbId_Alt": {
+    "value": "044000037",
+    "description": "Alternative Creditor Agent Member ID"
+  },
+  "Cdtr_Nm_Alt": {
+    "value": "QAConsumer",
+    "description": "Alternative Creditor Name"
+  },
+  "Cdtr_StrtNm_Alt": {
+    "value": "12345 Main Street",
+    "description": "Alternative Creditor Street Name"
+  },
+  "Cdtr_PstCd_Alt": {
+    "value": "234234",
+    "description": "Alternative Creditor Postal Code"
+  },
+  "Cdtr_TwnNm_Alt": {
+    "value": "Bentonville",
+    "description": "Alternative Creditor Town Name"
+  },
+  "Cdtr_CtrySubDvsn_Alt": {
+    "value": "SC",
+    "description": "Alternative Creditor Country Subdivision"
+  },
+  "Cdtr_AdrLine_Alt": {
+    "value": "Cross Street",
+    "description": "Alternative Creditor Address Line"
+  },
+  "CdtrAcct_Id_Alt": {
+    "value": "110088",
+    "description": "Alternative Creditor Account ID"
+  },
+  "RmtInf_Prtry": {
+    "value": "RTRN",
+    "description": "Remittance Information Proprietary Code"
+  },
+  "RmtInf_Nb": {
+    "template": "{YYYYMMDD}021000021J3BBNKA{RANDOM_11}",
+    "description": "Remittance Information Number - Format: YYYYMMDD + prefix + 11 random digits",
+    "sample": "20251016021000021J3BBNKA00000006918"
+  },
+  "RmtInf_RltdDt": {
+    "template": "{CURRENT_DATE}",
+    "description": "Remittance Information Related Date - Should be current date (YYYY-MM-DD format)",
+    "sample": "2025-10-16"
+  },
+  "dynamic_generation_rules": {
+    "MsgId": {
+      "format": "M{YYYYMMDD}101010101MTBOTS{RANDOM_4}",
+      "date_format": "YYYYMMDD",
+      "random_digits": 4,
+      "position": "last_4"
+    },
+    "InstrId": {
+      "format": "{YYYYMMDD}101010101MTBAKSG{RANDOM_4}",
+      "date_format": "YYYYMMDD",
+      "random_digits": 4,
+      "position": "last_4"
+    },
+    "TxId": {
+      "format": "{YYYYMMDD}101010101MTBAKSG{RANDOM_4}",
+      "date_format": "YYYYMMDD",
+      "random_digits": 4,
+      "position": "last_4"
+    },
+    "CreDtTm": {
+      "format": "YYYY-MM-DDThh:mm:ss",
+      "use_current_datetime": true
+    },
+    "IntrBkSttlmDt": {
+      "format": "YYYY-MM-DD",
+      "use_current_date": true
+    },
+    "BizMsgIdr": {
+      "format": "B{YYYYMMDD}990000001S1HOTS{RANDOM_11}",
+      "date_format": "YYYYMMDD",
+      "random_digits": 11,
+      "position": "last_11"
+    },
+    "RmtInf_Nb": {
+      "format": "{YYYYMMDD}021000021J3BBNKA{RANDOM_11}",
+      "date_format": "YYYYMMDD",
+      "random_digits": 11,
+      "position": "last_11"
+    }
+  }
+}
+
