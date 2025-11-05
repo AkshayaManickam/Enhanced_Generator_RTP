@@ -458,9 +458,9 @@ public class XmlGenerationService {
             System.out.println("  - " + tag.getXmlTag() + " (index: " + tag.getIndex() + ")");
         }
         
-        // XML Header
+        // XML Header with ct namespace prefix
         xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        xml.append("<Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
+        xml.append("<Document xmlns:ct=\"urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
         
         // Generate content recursively
         for (XmlTag rootTag : allTags) {
@@ -501,13 +501,16 @@ public class XmlGenerationService {
         if (shouldInclude) {
             String indent = "  ".repeat(indentLevel);
             
+            // Add ct: prefix to all tags
+            String tagWithPrefix = "ct:" + tag.getXmlTag();
+            
             // Check if tag has children
             if (tag.getChildren() != null && !tag.getChildren().isEmpty()) {
                 // Mark entire tag (opening to closing) if it's an included optional tag
                 if (isIncludedOptional) {
-                    xml.append(indent).append("<!--OPTIONAL_START--><").append(tag.getXmlTag()).append(">\n");
+                    xml.append(indent).append("<!--OPTIONAL_START--><").append(tagWithPrefix).append(">\n");
                 } else {
-                    xml.append(indent).append("<").append(tag.getXmlTag()).append(">\n");
+                    xml.append(indent).append("<").append(tagWithPrefix).append(">\n");
                 }
                 
                 // Process children (they will NOT be marked as optional even if parent is)
@@ -517,22 +520,22 @@ public class XmlGenerationService {
                 
                 // Close the highlight after closing tag if it's optional
                 if (isIncludedOptional) {
-                    xml.append(indent).append("</").append(tag.getXmlTag()).append("><!--OPTIONAL_END-->\n");
+                    xml.append(indent).append("</").append(tagWithPrefix).append("><!--OPTIONAL_END-->\n");
                 } else {
-                    xml.append(indent).append("</").append(tag.getXmlTag()).append(">\n");
+                    xml.append(indent).append("</").append(tagWithPrefix).append(">\n");
                 }
             } else {
                 // Leaf node - generate sample value
                 String sampleValue = generateSampleValue(tag);
                 if (isIncludedOptional) {
                     // Highlight entire tag from opening to closing
-                    xml.append(indent).append("<!--OPTIONAL_START--><").append(tag.getXmlTag()).append(">")
+                    xml.append(indent).append("<!--OPTIONAL_START--><").append(tagWithPrefix).append(">")
                        .append(sampleValue)
-                       .append("</").append(tag.getXmlTag()).append("><!--OPTIONAL_END-->\n");
+                       .append("</").append(tagWithPrefix).append("><!--OPTIONAL_END-->\n");
                 } else {
-                    xml.append(indent).append("<").append(tag.getXmlTag()).append(">")
+                    xml.append(indent).append("<").append(tagWithPrefix).append(">")
                        .append(sampleValue)
-                       .append("</").append(tag.getXmlTag()).append(">\n");
+                       .append("</").append(tagWithPrefix).append(">\n");
                 }
             }
         }
@@ -637,7 +640,19 @@ public class XmlGenerationService {
             return generateUETR();
         }
         // General ID fields (not MsgId, InstrId, EndToEndId, TxId, UETR)
-        else if (tagName.contains("ID")) {
+        else if (tagName.contains("ID") && !tagName.equals("MSGID") && !tagName.equals("INSTRID") && 
+                 !tagName.equals("ENDTOENDID") && !tagName.equals("TXID") && !tagName.equals("MMBID")) {
+            // Check for account-related IDs
+            if (tag.getIndex() != null) {
+                // Debtor Account ID (Index 2.61.1)
+                if (tag.getIndex().equals("2.61.1.1.2.1")) {
+                    return "US88664715164441";
+                }
+                // Creditor Account ID (Index 2.97.1)
+                else if (tag.getIndex().equals("2.97.1.1.2.1")) {
+                    return "112277";
+                }
+            }
             return "ID" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         } 
         // Date/Time fields (general)
@@ -652,8 +667,16 @@ public class XmlGenerationService {
         else if (tagName.contains("CCY")) {
             return "USD";
         } 
-        // Name fields
+        // Name fields - use standard test data
         else if (tagName.contains("NM") || tagName.equals("NM")) {
+            // Check if this is Debtor or Creditor based on context
+            if (tag.getIndex() != null && tag.getIndex().startsWith("2.53")) {
+                // Debtor Name (Index 2.53)
+                return "MRS. GREEN";
+            } else if (tag.getIndex() != null && tag.getIndex().startsWith("2.94")) {
+                // Creditor Name (Index 2.94)
+                return "Participant Valid model";
+            }
             return "Sample Name";
         } 
         // BIC/SWIFT codes (Financial Institution Identification)
@@ -685,9 +708,75 @@ public class XmlGenerationService {
         else if (tagName.contains("CTRY")) {
             return "US";
         } 
-        // Postal code
-        else if (tagName.contains("PSTLCD") || tagName.contains("PSTCD")) {
+        // Postal code - use standard test data
+        else if (tagName.contains("PSTCD") || tagName.contains("PSTLCD")) {
+            // Check if Debtor or Creditor context
+            if (tag.getIndex() != null && tag.getIndex().startsWith("2.54")) {
+                // Debtor Postal Code
+                return "NY 12345";
+            } else if (tag.getIndex() != null && tag.getIndex().startsWith("2.95")) {
+                // Creditor Postal Code
+                return "12344";
+            }
             return "10001";
+        }
+        // Street Name - use standard test data
+        else if (tagName.contains("STRTNM")) {
+            if (tag.getIndex() != null && tag.getIndex().startsWith("2.54")) {
+                return "Broadway";
+            } else if (tag.getIndex() != null && tag.getIndex().startsWith("2.95")) {
+                return "NORTH AVE";
+            }
+            return "Main Street";
+        }
+        // Building Number - use standard test data
+        else if (tagName.contains("BLDGNB")) {
+            if (tag.getIndex() != null && tag.getIndex().startsWith("2.54")) {
+                return "1500";
+            } else if (tag.getIndex() != null && tag.getIndex().startsWith("2.95")) {
+                return "1123";
+            }
+            return "100";
+        }
+        // Town Name - use standard test data
+        else if (tagName.contains("TWNNM")) {
+            if (tag.getIndex() != null && tag.getIndex().startsWith("2.54")) {
+                return "New York";
+            } else if (tag.getIndex() != null && tag.getIndex().startsWith("2.95")) {
+                return "LOS ANGELES";
+            }
+            return "City";
+        }
+        // Country Subdivision (State) - use standard test data
+        else if (tagName.contains("CTRYSUBDVSN")) {
+            if (tag.getIndex() != null && tag.getIndex().startsWith("2.54")) {
+                return "NY";
+            } else if (tag.getIndex() != null && tag.getIndex().startsWith("2.95")) {
+                return "LA";
+            }
+            return "NY";
+        }
+        // Birth Date - use standard test data
+        else if (tagName.contains("BIRTHDT")) {
+            if (tag.getIndex() != null && tag.getIndex().startsWith("2.56")) {
+                return "1984-01-01";
+            } else if (tag.getIndex() != null && tag.getIndex().startsWith("2.97")) {
+                return "1989-01-09";
+            }
+            return "1990-01-01";
+        }
+        // City of Birth - use standard test data
+        else if (tagName.contains("CITYOFBIRTH")) {
+            if (tag.getIndex() != null && tag.getIndex().startsWith("2.56")) {
+                return "New York";
+            } else if (tag.getIndex() != null && tag.getIndex().startsWith("2.97")) {
+                return "LOS ANGELES";
+            }
+            return "New York";
+        }
+        // Country of Birth - use standard test data
+        else if (tagName.contains("CTRYOFBIRTH")) {
+            return "US";
         } 
         // Generic code fields (max 4 chars) - but not the specific CD for clearing system
         else if (tagName.contains("CD") && tag.getLength() != null && tag.getLength() <= 4) {
@@ -764,6 +853,8 @@ public class XmlGenerationService {
     /**
      * Generate Settlement Amount according to ISO 20022 pacs.008 specification (Index 1.6, 2.19)
      * 
+     * Using standard test data: $92,663.51
+     * 
      * Requirements:
      * - Maximum 2 decimal (fractional) digits allowed
      * - Maximum 18 total digits (including decimal digits)
@@ -771,36 +862,11 @@ public class XmlGenerationService {
      * - Currency must be USD (handled separately)
      * - TtlIntrBkSttlmAmt (Index 1.6) must equal IntrBkSttlmAmt (Index 2.19)
      * 
-     * Validation Rules (Index 2.19):
-     * - Global Transaction Limit (SITL)
-     * - Payment Type Limit (STL)
-     * - Net Position must not exceed Prefunded Balance
-     * 
-     * Reject Codes:
-     * - '650': Structural validation failure
-     * - 'AM02': Global Transaction Limit breach (SITL)
-     * - 'AM13': Payment Type Limit breach (STL)
-     * - 'AM04': Net Position breaches Prefunded Balance
-     * - 'AM12': TtlIntrBkSttlmAmt does not equal IntrBkSttlmAmt
-     * 
-     * Example: 525.25
+     * Example: 92663.51
      */
     private String generateSettlementAmount() {
-        // Generate a random amount between 0.01 and 999999.99
-        // Keeping it reasonable for testing (6 digits before decimal + 2 after)
-        double minAmount = 0.01;
-        double maxAmount = 999999.99;
-        
-        double randomAmount = minAmount + (Math.random() * (maxAmount - minAmount));
-        
-        // Use BigDecimal for precise decimal handling
-        BigDecimal amount = BigDecimal.valueOf(randomAmount);
-        
-        // Round to 2 decimal places as per specification
-        amount = amount.setScale(2, RoundingMode.HALF_UP);
-        
-        // Return as string with exactly 2 decimal places
-        return amount.toPlainString();
+        // Use standard test amount from your template
+        return "92663.51";
     }
     
     /**
@@ -999,22 +1065,19 @@ public class XmlGenerationService {
     /**
      * Generate Member Identification according to ISO 20022 pacs.008 specification (Index 2.111)
      * 
-     * Identification of the Routing and Transit number of the Intermediary FI 
-     * between the Debtor FI and the RTP Sending Participant.
+     * Using standard test routing numbers:
+     * - Instructing Agent (Debtor): 234567891
+     * - Instructed Agent (Creditor): 071212128
      * 
      * Requirements:
      * - Length: 9 characters (Routing and Transit number)
      * - Only allowed when Local Instrument is "OLO", "INDIRECT DOMESTIC", or "IXB"
-     * - Rejected with code '650' if provided and Local Instrument is not OLO, INDIRECT DOMESTIC, or IXB
      * 
      * Format: 9-digit US Routing Transit Number (RTN)
-     * 
-     * Example: 021000021
      */
     private String generateMemberIdentification() {
-        // Generate a sample 9-digit Routing and Transit Number
-        // Using a well-known routing number format: 021000021 (JP Morgan Chase)
-        return "021000021";
+        // Use standard test routing number (Debtor's bank)
+        return "234567891";
     }
     
     /**
