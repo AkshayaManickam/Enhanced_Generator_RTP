@@ -487,3 +487,241 @@ $shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 * {
   box-sizing: border-box;
 }
+
+// Custom Modal Styles
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-dialog {
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 90%;
+  animation: slideUp 0.3s ease;
+  overflow: hidden;
+}
+
+.modal-header {
+  background: $primary;
+  color: $white;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h3 {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .modal-close {
+    background: transparent;
+    border: none;
+    color: $white;
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.modal-body {
+  padding: 1.5rem;
+
+  p {
+    margin: 0;
+    font-size: 0.938rem;
+    line-height: 1.6;
+    color: $text-dark;
+  }
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  background: #f8f9fa;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  border-top: 1px solid #dee2e6;
+}
+
+// Toast Notification Styles
+.toast-container {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 1050;
+  animation: slideInRight 0.3s ease;
+}
+
+.toast {
+  background: $white;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  min-width: 300px;
+  max-width: 400px;
+  border-left: 4px solid;
+
+  &.toast-success {
+    border-left-color: $success;
+    
+    .toast-icon {
+      background: rgba($success, 0.1);
+      color: $success;
+    }
+  }
+
+  &.toast-error {
+    border-left-color: $danger;
+    
+    .toast-icon {
+      background: rgba($danger, 0.1);
+      color: $danger;
+    }
+  }
+
+  &.toast-info {
+    border-left-color: $info;
+    
+    .toast-icon {
+      background: rgba($info, 0.1);
+      color: $info;
+    }
+  }
+
+  &.toast-warning {
+    border-left-color: #ffc107;
+    
+    .toast-icon {
+      background: rgba(#ffc107, 0.1);
+      color: #ffc107;
+    }
+  }
+}
+
+.toast-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.toast-message {
+  flex: 1;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $text-dark;
+  line-height: 1.5;
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  color: $text-light;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background: #f8f9fa;
+    color: $text-dark;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Responsive modal
+@media (max-width: 768px) {
+  .modal-dialog {
+    max-width: 95%;
+    margin: 1rem;
+  }
+
+  .toast-container {
+    right: 10px;
+    left: 10px;
+    top: 70px;
+  }
+
+  .toast {
+    min-width: auto;
+    max-width: 100%;
+  }
+}

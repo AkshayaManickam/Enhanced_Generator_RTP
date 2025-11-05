@@ -23,6 +23,17 @@ export class ProcessPaymentsComponent implements OnInit {
   message: string = '';
   messageCategory: 'success' | 'error' | 'info' = 'info';
 
+  // Modal state
+  showConfirmModal: boolean = false;
+  confirmModalTitle: string = '';
+  confirmModalMessage: string = '';
+  confirmModalAction: (() => void) | null = null;
+
+  // Toast notifications
+  toastMessage: string = '';
+  toastType: 'success' | 'error' | 'info' | 'warning' = 'info';
+  showToast: boolean = false;
+
   constructor(
     private router: Router,
     private paymentProcessingService: PaymentProcessingService
@@ -61,15 +72,17 @@ export class ProcessPaymentsComponent implements OnInit {
       next: (response) => {
         this.isProcessing = false;
         if (response.success) {
-          this.showMessage(response.message || 'Payment processed successfully!', 'success');
+          this.showToastMessage(response.message || 'Payment processed successfully!', 'success');
           
           setTimeout(() => {
-            if (confirm('Payment processed successfully! Would you like to process another payment?')) {
-              this.resetForm();
-            }
-          }, 2000);
+            this.showConfirmDialog(
+              'Success',
+              'Payment processed successfully! Would you like to process another payment?',
+              () => this.resetForm()
+            );
+          }, 1000);
         } else {
-          this.showMessage(response.message || 'Payment processing failed', 'error');
+          this.showToastMessage(response.message || 'Payment processing failed', 'error');
         }
       },
       error: (error) => {
@@ -83,7 +96,7 @@ export class ProcessPaymentsComponent implements OnInit {
           errorMessage = error.message;
         }
         
-        this.showMessage(errorMessage, 'error');
+        this.showToastMessage(errorMessage, 'error');
       }
     });
   }
@@ -99,18 +112,22 @@ export class ProcessPaymentsComponent implements OnInit {
   pasteFromClipboard(): void {
     navigator.clipboard.readText().then(text => {
       this.pacs008Message = text;
-      this.showMessage('Message pasted from clipboard', 'success');
+      this.showToastMessage('Message pasted from clipboard', 'success');
     }).catch(err => {
       console.error('Failed to read clipboard:', err);
-      this.showMessage('Failed to read clipboard. Please paste manually.', 'error');
+      this.showToastMessage('Failed to read clipboard. Please paste manually.', 'error');
     });
   }
 
   clearMessage(): void {
-    if (confirm('Are you sure you want to clear the message?')) {
-      this.pacs008Message = '';
-      this.showMessage('Message cleared', 'info');
-    }
+    this.showConfirmDialog(
+      'Clear Message',
+      'Are you sure you want to clear the message?',
+      () => {
+        this.pacs008Message = '';
+        this.showToastMessage('Message cleared', 'info');
+      }
+    );
   }
 
   showMessage(message: string, type: 'success' | 'error' | 'info'): void {
@@ -121,6 +138,39 @@ export class ProcessPaymentsComponent implements OnInit {
         this.message = '';
       }
     }, 5000);
+  }
+
+  // Toast notification method
+  showToastMessage(message: string, type: 'success' | 'error' | 'info' | 'warning'): void {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToast = true;
+    
+    setTimeout(() => {
+      this.showToast = false;
+    }, 4000);
+  }
+
+  // Confirm dialog method
+  showConfirmDialog(title: string, message: string, onConfirm: () => void): void {
+    this.confirmModalTitle = title;
+    this.confirmModalMessage = message;
+    this.confirmModalAction = onConfirm;
+    this.showConfirmModal = true;
+  }
+
+  confirmAction(): void {
+    if (this.confirmModalAction) {
+      this.confirmModalAction();
+    }
+    this.closeConfirmModal();
+  }
+
+  closeConfirmModal(): void {
+    this.showConfirmModal = false;
+    this.confirmModalTitle = '';
+    this.confirmModalMessage = '';
+    this.confirmModalAction = null;
   }
 
   backToHome(): void {

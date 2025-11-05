@@ -655,8 +655,11 @@ export class AdvancedGeneratorComponent implements OnInit {
   }
 
   copyCombination(combination: XmlCombination): void {
-    // Copy the raw XML content (without HTML markers) to clipboard
-    const rawXml = combination.xmlContent;
+    // Copy the raw XML content (without HTML markers and optional comments) to clipboard
+    const rawXml = combination.xmlContent
+      .replace(/<!--OPTIONAL_START-->/g, '')
+      .replace(/<!--OPTIONAL_END-->/g, '')
+      .replace(/<!--OPTIONAL_TAG-->/g, '');
     navigator.clipboard.writeText(rawXml).then(() => {
       this.showMessage('XML copied to clipboard', 'success');
     }).catch(err => {
